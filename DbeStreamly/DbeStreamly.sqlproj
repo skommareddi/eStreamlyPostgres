@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>DbeStreamly</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{40dfafe5-3bd3-4e56-b4ce-b7ed168af2d0}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>DbeStreamly</RootNamespace>
+    <AssemblyName>DbeStreamly</AssemblyName>
+    <ModelCollation>1033, CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="Scripts" />
+    <Folder Include="Scripts\Procedures" />
+    <Folder Include="Scripts\Tables" />
+    <Folder Include="Scripts\Views" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="Scripts\Procedures\Script0002-CreateShopifyProductCategory.sql" />
+    <Build Include="Scripts\Procedures\Script0003-CreateShopifyProductMeasurement.sql" />
+    <Build Include="Scripts\Procedures\Script0004-CreateShopifyProducts.sql" />
+    <Build Include="Scripts\Procedures\Script0005-CreateShopifyProductVariants.sql" />
+    <Build Include="Scripts\Procedures\Script0006-CreateWooCommerceProductCategory.sql" />
+    <Build Include="Scripts\Procedures\Script0007-CreateWooCommerceProductMeasurement.sql" />
+    <Build Include="Scripts\Procedures\Script0008-CreateWooCommerceProducts.sql" />
+    <Build Include="Scripts\Procedures\Script0009-CreateWooCommerceProductVariant.sql" />
+    <Build Include="Scripts\Procedures\Script0010-GetActiveParticipantsByUniqueId.sql" />
+    <Build Include="Scripts\Procedures\Script0011-GetAllEngagementData.sql" />
+    <Build Include="Scripts\Procedures\Script0012-GetAllMedia.sql" />
+    <Build Include="Scripts\Procedures\Script0013-getAllOrders.sql" />
+    <Build Include="Scripts\Procedures\Script0014-GetAllProducts.sql" />
+    <Build Include="Scripts\Procedures\Script0015-GetAllVideoDetail.sql" />
+    <Build Include="Scripts\Procedures\Script0016-GetAllVideoDetailxml.sql" />
+    <Build Include="Scripts\Procedures\Script0017-GetAnalyticsDetails.sql" />
+    <Build Include="Scripts\Procedures\Script0018-GetEventandRecordedEventByMerchant.sql" />
+    <Build Include="Scripts\Procedures\Script0019-GetEventPollBuyInfo.sql" />
+    <Build Include="Scripts\Procedures\Script0020-GetEventPollInfo.sql" />
+    <Build Include="Scripts\Procedures\Script0021-GetFollowerListByStreamId.sql" />
+    <Build Include="Scripts\Procedures\Script0022-getlatestfollowersbybusiness.sql" />
+    <Build Include="Scripts\Procedures\Script0023-getlatestLivePollandViewDetails.sql" />
+    <Build Include="Scripts\Procedures\Script0024-GetMechantDetails.sql" />
+    <Build Include="Scripts\Procedures\Script0025-getnewleads.sql" />
+    <Build Include="Scripts\Procedures\Script0026-getpollresponses.sql" />
+    <Build Include="Scripts\Procedures\Script0027-GetPollResponsesByUniqueId.sql" />
+    <Build Include="Scripts\Procedures\Script0028-GetProductList.sql" />
+    <Build Include="Scripts\Procedures\Script0029-GetProductListById.sql" />
+    <Build Include="Scripts\Procedures\Script0030-GetProductListByUpcomingEvent.sql" />
+    <Build Include="Scripts\Procedures\Script0031-GetUpcomingEventBusiness.sql" />
+    <Build Include="Scripts\Procedures\Script0032-GetUpcomingEventProducts.sql" />
+    <Build Include="Scripts\Procedures\Script0033-GetUpcomingEvents.sql" />
+    <Build Include="Scripts\Procedures\Script0034-GetUserChannel.sql" />
+    <Build Include="Scripts\Procedures\Script0035-GetVideoInteractivity.sql" />
+    <Build Include="Scripts\Procedures\Script0036-latestlikehistory.sql" />
+    <Build Include="Scripts\Procedures\Script0037-SitemapXML.sql" />
+    <Build Include="Scripts\Tables\Script0001 - User Table.sql" />
+    <Build Include="Scripts\Views\GetAllMediaDetail.sql" />
+    <Build Include="Scripts\Views\GetAllUpcomingEvent.sql" />
+  </ItemGroup>
+</Project>
