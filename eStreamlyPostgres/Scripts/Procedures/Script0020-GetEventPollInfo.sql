@@ -6,13 +6,8 @@ CREATE OR REPLACE FUNCTION public.geteventpollinfo(
 	uniqueid character varying,
 	refcursor1 refcursor,
 	refcursor2 refcursor)
-    RETURNS SETOF refcursor 
-    LANGUAGE 'plpgsql'
-    COST 100
-    VOLATILE PARALLEL UNSAFE
-    ROWS 1000
-
-AS $BODY$
+   
+    RETURNS SETOF refcursor AS $$
 DECLARE startDate timestamp;endDate timestamp;
 BEGIN
 DROP TABLE IF EXISTS PollResult;
@@ -242,8 +237,8 @@ OPEN refcursor2 FOR
 select * from UpcomingPollResult;
 RETURN NEXT refcursor2;
 
-END
-$BODY$;
+END;
+$$ LANGUAGE plpgsql;
 
 ALTER FUNCTION public.geteventpollinfo(character varying, refcursor, refcursor)
     OWNER TO iresponsive;

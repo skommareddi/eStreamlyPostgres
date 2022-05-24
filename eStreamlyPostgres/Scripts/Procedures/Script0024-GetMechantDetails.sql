@@ -9,13 +9,7 @@ CREATE OR REPLACE FUNCTION public.getmechantdetails(
 	refcursor3 refcursor,
 	refcursor4 refcursor,
 	refcursor5 refcursor)
-    RETURNS SETOF refcursor 
-    LANGUAGE 'plpgsql'
-    COST 100
-    VOLATILE PARALLEL UNSAFE
-    ROWS 1000
-
-AS $BODY$
+    RETURNS SETOF refcursor AS $$
 BEGIN
 
 DROP TABLE IF EXISTS businessList;
@@ -350,7 +344,7 @@ select (select Count(*) :: integer TotalPost
 RETURN NEXT refcursor5;
 
 END;
-$BODY$;
+$$ LANGUAGE plpgsql;
 
 ALTER FUNCTION public.getmechantdetails(text, refcursor, refcursor, refcursor, refcursor, refcursor)
     OWNER TO iresponsive;

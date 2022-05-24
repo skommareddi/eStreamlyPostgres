@@ -1,7 +1,8 @@
 ﻿CREATE OR REPLACE FUNCTION public.GetEventPollBuyInfo(
 	uniqueId varchar,
 	refcursor1 refcursor)
-RETURNS refcursor AS $$
+RETURNS SETOF refcursor
+AS $$
 DECLARE startDate timestamp;endDate timestamp;
 BEGIN
 
@@ -87,5 +88,5 @@ where "Valid_End_Date" >= startDate and "Valid_Start_Date" <= endDate;
 	and poll."ProductId" :: bigint > 0;
 	RETURN refcursor1;
 
-END
+END;
 $$ LANGUAGE plpgsql;

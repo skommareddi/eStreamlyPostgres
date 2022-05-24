@@ -6,24 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Scripts\Procedures\Script0002-CreateShopifyProductCategory.sql" />
-    <None Remove="Scripts\Procedures\Script0003-CreateShopifyProductMeasurement.sql" />
-    <None Remove="Scripts\Procedures\Script0004-CreateShopifyProducts.sql" />
-    <None Remove="Scripts\Procedures\Script0005-CreateShopifyProductVariants.sql" />
-    <None Remove="Scripts\Procedures\Script0006-CreateWooCommerceProductCategory.sql" />
-    <None Remove="Scripts\Procedures\Script0007-CreateWooCommerceProductMeasurement.sql" />
-    <None Remove="Scripts\Procedures\Script0008-CreateWooCommerceProducts.sql" />
-    <None Remove="Scripts\Procedures\Script0009-CreateWooCommerceProductVariant.sql" />
-    <None Remove="Scripts\Procedures\Script0010-GetActiveParticipantsByUniqueId.sql" />
-    <None Remove="Scripts\Procedures\Script0011-GetAllEngagementData.sql" />
-    <None Remove="Scripts\Procedures\Script0012-GetAllMedia.sql" />
-    <None Remove="Scripts\Procedures\Script0013-getAllOrders.sql" />
-    <None Remove="Scripts\Procedures\Script0014-GetAllProducts.sql" />
-    <None Remove="Scripts\Procedures\Script0015-GetAllVideoDetail.sql" />
-    <None Remove="Scripts\Procedures\Script0016-GetAllVideoDetailxml.sql" />
-    <None Remove="Scripts\Procedures\Script0017-GetAnalyticsDetails.sql" />
-    <None Remove="Scripts\Procedures\Script0018-GetEventandRecordedEventByMerchant.sql" />
-    <None Remove="Scripts\Procedures\Script0019-GetEventPollBuyInfo.sql" />
     <None Remove="Scripts\Procedures\Script0020-GetEventPollInfo.sql" />
     <None Remove="Scripts\Procedures\Script0021-GetFollowerListByStreamId.sql" />
     <None Remove="Scripts\Procedures\Script0022-getlatestfollowersbybusiness.sql" />
@@ -43,27 +25,10 @@
     <None Remove="Scripts\Procedures\Script0036-latestlikehistory.sql" />
     <None Remove="Scripts\Procedures\Script0037-SitemapXML.sql" />
     <None Remove="Scripts\Script0001 - User Table.sql" />
+    <None Remove="Scripts\Views\GetAllMediaDetail.sql" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Scripts\Procedures\Script0002-CreateShopifyProductCategory.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0003-CreateShopifyProductMeasurement.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0004-CreateShopifyProducts.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0005-CreateShopifyProductVariants.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0006-CreateWooCommerceProductCategory.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0007-CreateWooCommerceProductMeasurement.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0008-CreateWooCommerceProducts.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0009-CreateWooCommerceProductVariant.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0010-GetActiveParticipantsByUniqueId.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0011-GetAllEngagementData.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0012-GetAllMedia.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0013-getAllOrders.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0014-GetAllProducts.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0015-GetAllVideoDetail.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0016-GetAllVideoDetailxml.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0017-GetAnalyticsDetails.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0018-GetEventandRecordedEventByMerchant.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0019-GetEventPollBuyInfo.sql" />
     <EmbeddedResource Include="Scripts\Procedures\Script0020-GetEventPollInfo.sql" />
     <EmbeddedResource Include="Scripts\Procedures\Script0021-GetFollowerListByStreamId.sql" />
     <EmbeddedResource Include="Scripts\Procedures\Script0022-getlatestfollowersbybusiness.sql" />
@@ -82,6 +47,7 @@
     <EmbeddedResource Include="Scripts\Procedures\Script0035-GetVideoInteractivity.sql" />
     <EmbeddedResource Include="Scripts\Procedures\Script0036-latestlikehistory.sql" />
     <EmbeddedResource Include="Scripts\Procedures\Script0037-SitemapXML.sql" />
+    <EmbeddedResource Include="Scripts\Views\GetAllMediaDetail.sql" />
   </ItemGroup>
 
   <ItemGroup>
