@@ -1,26 +1,14 @@
-﻿CREATE OR REPLACE FUNCTION GetUserChannel(channelIdParam varchar(500),
-channelInfoIdParam bigint,
-businessIdParam	bigint ) 
-    RETURNS TABLE (
-         ChannelInfoId	bigint
-,ChannelId	varchar
-,UserId	varchar
-,BusinessId	bigint
-,ChannelDesc	varchar
-,ChannelName	varchar
-,ImageUrl	varchar
-,ThumbnailImageUrl	varchar
-,BusinessName	varchar
-,BusinessImage	varchar
-,BackgroundImage	varchar
-,LiveUniqueId	varchar
-,EventName	varchar
-,EventDesc	varchar
-,EventImage	varchar
-,Shortname	varchar
-,BusinessDescription	varchar
-,BusinessUrl	varchar)
-    LANGUAGE plpgsql  AS $$
+﻿CREATE OR REPLACE FUNCTION public.getuserchannel(
+	channelid1 character varying,
+	channelinfoid1 bigint,
+	businessid1 bigint)
+    RETURNS TABLE(channelinfoid bigint, channelid character varying, userid character varying, businessid bigint, channeldesc character varying, channelname character varying, imageurl character varying, thumbnailimageurl character varying, businessname character varying, businessimage character varying, backgroundimage character varying, liveuniqueid character varying, eventname character varying, eventdesc character varying, eventimage character varying, shortname character varying, businessdescription character varying, businessurl character varying) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
 	DECLARE 
      BEGIN
     
@@ -44,9 +32,9 @@ select ls."Channel_Info_Id"
 from "Live_Stream_Info" ls
 join "Channel_Info" ci on ls."Channel_Info_Id" = ci."Channel_Info_Id"
 left join "Upcoming_Live_Stream" ul on ls."Unique_Id" = ul."Media_Unique_Id"
-where (ci."Channel_Id" = channelId or channelId is null)
-and (ci."Channel_Info_Id" = channelInfoIdParam or channelInfoIdParam is null)
-and (ci."Business_Id" = businessId or businessId is null)
+where (ci."Channel_Id" = channelid1 or channelid1 is null)
+and (ci."Channel_Info_Id" = channelinfoid1 or channelinfoid1 is null)
+and (ci."Business_Id" = businessid1 or businessid1 is null)
 group by ls."Channel_Info_Id"
 		,"Unique_Id" 
 		,ls."Created_Date"
@@ -113,9 +101,9 @@ select u."Channel_Info_Id" ChannelInfoId,
 		u.BusinessUrl
 from userChannel u
 where rn = 1 
-and (u."Channel_Id" = channelIdParam or channelIdParam is null)
-and ("Channel_Info_Id" = channelInfoIdParam or channelInfoIdParam is null)
-and ("Business_Id" = businessIdParam or businessIdParam is null)
+and (u."Channel_Id" = channelid1 or channelid1 is null)
+and ("Channel_Info_Id" = channelinfoid1 or channelinfoid1 is null)
+and ("Business_Id" = businessid1 or businessid1 is null)
 group by  "Channel_Id",
 		"Channel_Info_Id",
 		"Business_Id",
@@ -139,4 +127,5 @@ group by  "Channel_Id",
 order by "Channel_Id",RoleNo;
 
 DROP TABLE liveStream;
-END; $$;
+END; 
+$BODY$;

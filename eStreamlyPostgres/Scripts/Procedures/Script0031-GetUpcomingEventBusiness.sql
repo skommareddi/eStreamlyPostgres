@@ -4,7 +4,7 @@ RETURNS TABLE (
 	BusinessImage VARCHAR,
 	Shortname VARCHAR,
 	BackgroundImage VARCHAR,
-	FollowersCount numeric,
+	FollowersCount bigint,
 	BusinessId bigint
 )
 LANGUAGE plpgsql  AS $$
@@ -33,16 +33,16 @@ LANGUAGE plpgsql  AS $$
 
 	RETURN QUERY
 
-	 select  b."Business_Name" BusinessName
-	  ,b."Business_Image" BusinessImage
-	  ,b."Shortname" Shortname
-	  ,b."Background_Image" BackgroundImage
-	  ,f."FollowersCount"
-	  ,b."Business_Id"  BusinessId
+	 select  b."Business_Name" "BusinessName"
+	  ,b."Business_Image" "BusinessImage"
+	  ,b."Shortname" "Shortname"
+	  ,b."Background_Image" "BackgroundImage"
+	  ,f."FollowersCount" "FollowersCount"
+	  ,b."Business_Id"  "BusinessId"
 	from "Business" b
 	join upcomingEvents u on b."Business_Id" = u.BusinessId
 	left join (select f."Business_Id"
-	,COUNT(f."UserId") FollowersCount
+	,COUNT(f."UserId") "FollowersCount"
 	  from "Follower" f
 	  join upcomingEvents u on f."Business_Id" = u.BusinessId
 	  group by f."Business_Id") f on u.BusinessId = f."Business_Id"
