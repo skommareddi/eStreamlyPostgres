@@ -240,5 +240,3 @@ RETURN NEXT refcursor2;
 END;
 $$ LANGUAGE plpgsql;
 
-ALTER FUNCTION public.geteventpollinfo(character varying, refcursor, refcursor)
-    OWNER TO iresponsive;
