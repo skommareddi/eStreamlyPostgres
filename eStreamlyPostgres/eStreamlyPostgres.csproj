@@ -6,6 +6,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Scripts\Procedures\Script0010-GetActiveParticipantsByUniqueId.sql" />
+    <None Remove="Scripts\Procedures\Script0011-GetAllEngagementData.sql" />
+    <None Remove="Scripts\Procedures\Script0012-GetAllMedia.sql" />
+    <None Remove="Scripts\Procedures\Script0013-getAllOrders.sql" />
+    <None Remove="Scripts\Procedures\Script0014-GetAllProducts.sql" />
+    <None Remove="Scripts\Procedures\Script0015-GetAllVideoDetail.sql" />
+    <None Remove="Scripts\Procedures\Script0016-GetAllVideoDetailxml.sql" />
+    <None Remove="Scripts\Procedures\Script0017-GetAnalyticsDetails.sql" />
+    <None Remove="Scripts\Procedures\Script0018-GetEventandRecordedEventByMerchant.sql" />
+    <None Remove="Scripts\Procedures\Script0019-GetEventPollBuyInfo.sql" />
     <None Remove="Scripts\Procedures\Script0020-GetEventPollInfo.sql" />
     <None Remove="Scripts\Procedures\Script0021-GetFollowerListByStreamId.sql" />
     <None Remove="Scripts\Procedures\Script0022-getlatestfollowersbybusiness.sql" />
@@ -26,9 +36,20 @@
     <None Remove="Scripts\Procedures\Script0037-SitemapXML.sql" />
     <None Remove="Scripts\Script0001 - User Table.sql" />
     <None Remove="Scripts\Views\GetAllMediaDetail.sql" />
+    <None Remove="Scripts\Views\GetAllUpcomingEvent.sql" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Scripts\Procedures\Script0010-GetActiveParticipantsByUniqueId.sql" />
+    <EmbeddedResource Include="Scripts\Procedures\Script0011-GetAllEngagementData.sql" />
+    <EmbeddedResource Include="Scripts\Procedures\Script0012-GetAllMedia.sql" />
+    <EmbeddedResource Include="Scripts\Procedures\Script0013-getAllOrders.sql" />
+    <EmbeddedResource Include="Scripts\Procedures\Script0014-GetAllProducts.sql" />
+    <EmbeddedResource Include="Scripts\Procedures\Script0015-GetAllVideoDetail.sql" />
+    <EmbeddedResource Include="Scripts\Procedures\Script0016-GetAllVideoDetailxml.sql" />
+    <EmbeddedResource Include="Scripts\Procedures\Script0017-GetAnalyticsDetails.sql" />
+    <EmbeddedResource Include="Scripts\Procedures\Script0018-GetEventandRecordedEventByMerchant.sql" />
+    <EmbeddedResource Include="Scripts\Procedures\Script0019-GetEventPollBuyInfo.sql" />
     <EmbeddedResource Include="Scripts\Procedures\Script0020-GetEventPollInfo.sql" />
     <EmbeddedResource Include="Scripts\Procedures\Script0021-GetFollowerListByStreamId.sql" />
     <EmbeddedResource Include="Scripts\Procedures\Script0022-getlatestfollowersbybusiness.sql" />
@@ -48,6 +69,7 @@
     <EmbeddedResource Include="Scripts\Procedures\Script0036-latestlikehistory.sql" />
     <EmbeddedResource Include="Scripts\Procedures\Script0037-SitemapXML.sql" />
     <EmbeddedResource Include="Scripts\Views\GetAllMediaDetail.sql" />
+    <EmbeddedResource Include="Scripts\Views\GetAllUpcomingEvent.sql" />
   </ItemGroup>
 
   <ItemGroup>

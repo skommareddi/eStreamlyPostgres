@@ -345,6 +345,3 @@ RETURN NEXT refcursor5;
 
 END;
 $$ LANGUAGE plpgsql;
-
-ALTER FUNCTION public.getmechantdetails(text, refcursor, refcursor, refcursor, refcursor, refcursor)
-    OWNER TO iresponsive;
