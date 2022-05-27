@@ -38,7 +38,16 @@ from "Discount_Coupon" dc
 where "Valid_End_Date" >= startDate and "Valid_Start_Date" <= endDate;
 	
 	OPEN refcursor1 FOR 
-	select Poll.*
+	select  poll."ChannelId" "ChannelId" 
+		  		,poll."PollUniqueId" "PollUniqueId"
+		  	    ,poll."ProductId" :: bigint "ProductId"
+		        ,poll."Name" "Name"
+		  		,poll."ItemUrl" "ItemUrl"
+		  		,poll."Description" "Description"
+		  		,poll."Price1" :: decimal "Price"
+				,poll."IsPollPosted" "IsPollPosted"
+				,poll."Poll_Info_Id" "Poll_Info_Id"
+				,poll."Upcoming_Poll_Info_Id" "Upcoming_Poll_Info_Id"
 			,COALESCE(co.soldcount,0) "SoldCount"
 			,d.*
 			,c."Discount_Coupon_Id" "DiscountCouponId"
@@ -46,7 +55,7 @@ where "Valid_End_Date" >= startDate and "Valid_Start_Date" <= endDate;
 			,c."Discount_Percentage" "DiscountPercentage"
 			,c."Product_Id" "CouponProduct"
 			,c."Valid_Start_Date" "ValidStartDate" 
-			,c."Valid_End_Date" "ValidEndDate" 
+			,c."Valid_End_Date" "ValidEndDate" 			
 	from (select poll.*
 			,ROW_NUMBER() OVER (PARTITION BY poll."ProductId" ORDER BY poll."Poll_Info_Id" DESC) "rno"
 		from (select distinct  pi."Poll_Info_Detail" :: json->> 'ChannelId' as "ChannelId"
@@ -55,7 +64,7 @@ where "Valid_End_Date" >= startDate and "Valid_Start_Date" <= endDate;
 							  ,pi."Poll_Info_Detail" :: json->'Item'->>'Name' as "Name"
    		 					  ,pi."Poll_Info_Detail" :: json->'Item'->>'ItemUrl' as "ItemUrl"
 			  				  ,pi."Poll_Info_Detail" :: json->'Item'->>'Description'as  "Description"
-			  				  ,pi."Poll_Info_Detail" :: json->'Item'->>'Price' as "Price"
+			  				  ,pi."Poll_Info_Detail" :: json->'Item'->>'Price' as "Price1"
 							,true "IsPollPosted"
 							,pi."Poll_Info_Id" "Poll_Info_Id"
 							, 0 "Upcoming_Poll_Info_Id"
@@ -69,7 +78,7 @@ where "Valid_End_Date" >= startDate and "Valid_Start_Date" <= endDate;
 					  ,pi."Poll_Info_Detail" :: json->'Item'->>'Name' as "Name"
 					  ,pi."Poll_Info_Detail" :: json->'Item'->>'ItemUrl' as "ItemUrl"
 					  ,pi."Poll_Info_Detail" :: json->'Item'->>'Description' as "Description"
-					  ,pi."Poll_Info_Detail" :: json->'Item'->>'Price' as "Description"
+					  ,pi."Poll_Info_Detail" :: json->'Item'->>'Price' as "Price1"
 					,pi."Is_Poll_Posted" "IsPollPosted"
 					,0 "Poll_Info_Id"
 					,pi."Upcoming_Poll_Info_Id"

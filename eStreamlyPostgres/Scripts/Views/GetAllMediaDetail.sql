@@ -1,22 +1,22 @@
 ﻿CREATE OR REPLACE VIEW GetAllMediaDetail
 AS
-select b."Background_Image" BusinessBackgroundImage
-	  ,b."Business_Id" BusinessId
-	  ,b."Business_Image" BusinessImage
-	  ,b."Business_Name" BusinessName
-	  ,b."Shortname" BusinessShortName
-	  ,m."Channel_Desc" ChannelDesc
-	  ,m."Channel_Id" ChannelId
-	  ,m."Channel_Name" ChannelName
-	  ,m."CreatedDate" CreatedDate
-	  ,m."Desktop_Image_Url" DesktopImageUrl
-	  ,m."Media_thumbnailGif_Url" MediaThumbnailGifUrl
-	  ,m."Media_thumbnail_Url" MediaThumbnailUrl
-	  ,m."Media_Unique_Id" MediaUniqueId
-	  ,m."Media_Item_Id" Media_Id
-	  ,m."Mobile_Image_Url" MobileImageUrl
-	  ,m."Tablet_Image_Url" TabletImageUrl
-	  ,m."Media_Unique_Id"  UniqueId
+select b."Background_Image" "BusinessBackgroundImage"
+	  ,b."Business_Id" "BusinessId"
+	  ,b."Business_Image" "BusinessImage"
+	  ,b."Business_Name" "BusinessName"
+	  ,b."Shortname" "BusinessShortName"
+	  ,m."Channel_Desc" "ChannelDesc"
+	  ,m."Channel_Id" "ChannelId"
+	  ,m."Channel_Name" "ChannelName"
+	  ,m."CreatedDate" "CreatedDate"
+	  ,m."Desktop_Image_Url" "DesktopImageUrl"
+	  ,m."Media_thumbnailGif_Url" "MediaThumbnailGifUrl"
+	  ,m."Media_thumbnail_Url" "MediaThumbnailUrl"
+	  ,m."Media_Unique_Id" "MediaUniqueId"
+	  ,m."Media_Item_Id" "Media_Id"
+	  ,m."Mobile_Image_Url" "MobileImageUrl"
+	  ,m."Tablet_Image_Url" "TabletImageUrl"
+	  ,m."Media_Unique_Id"  "UniqueId"
 from "MediaByUserAndChannel" m
 join "Live_Stream_Info" ls on m."Media_Unique_Id" = ls."Unique_Id"
 join "Channel_Info" ci on ls."Channel_Info_Id" = ci."Channel_Info_Id"

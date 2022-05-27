@@ -11,6 +11,16 @@
 AS $$
 BEGIN
 
+DROP TABLE IF EXISTS liveStream;
+CREATE TEMP TABLE liveStream(Channel_Info_Id bigint not null,
+						 Unique_Id varchar(250),
+						 rn bigint,
+						 EventImage varchar(1000),
+						 EventDesc varchar(1000),
+						 EventName varchar(1000),
+						 DesktopImageUrl varchar(1000)
+						 );
+
 DROP TABLE IF EXISTS upcomingevent;
 CREATE TEMP TABLE upcomingevent AS
 select ul."Upcoming_Live_Stream_Id"
@@ -42,6 +52,26 @@ join "Business" b on ci."Business_Id" = b."Business_Id"
 left join "AspNetUsers" u on ul."User_Id" = u."Id"
 where ul."Media_Unique_Id" = liveUniqueId;
 
+INSERT INTO liveStream
+select ls."Channel_Info_Id" "Channel_Info_Id"
+	  ,ls."Unique_Id"
+	  ,ROW_NUMBER() OVER (PARTITION BY ls."Channel_Info_Id" ORDER BY ls."Created_Date" desc ) AS rn	  
+	  ,ul."Event_Image" EventImage 
+	  ,ul."Description" EventDesc
+	  ,ul."Name" EventName
+	  ,ul."Desktop_Image_Url" DesktopImageUrl
+from "Live_Stream_Info" ls
+join "Channel_Info" ci on ls."Channel_Info_Id" = ci."Channel_Info_Id"
+left join "Upcoming_Live_Stream" ul on ls."Unique_Id" = ul."Media_Unique_Id"
+where ul."Media_Unique_Id" = liveuniqueid
+group by ls."Channel_Info_Id"
+		,"Unique_Id" 
+		,ls."Created_Date"
+		,ul."Event_Image" 
+		,ul."Description"
+		,ul."Name" 
+		,ul."Desktop_Image_Url";
+		
 DROP TABLE IF EXISTS userChannel;
 CREATE TEMP TABLE userChannel AS
 select  ci."Channel_Id",
@@ -51,15 +81,15 @@ select  ci."Channel_Id",
 		r."Name",
 		ci."Channel_Name",
 		ci."Channel_Desc",
-		u."ImageUrl",
-		u."ThumbnailImageUrl",
+		COALESCE(u."ImageUrl",b."Business_Image") "ImageUrl",
+		COALESCE(u."ThumbnailImageUrl",b."Background_Image") "ThumbnailImageUrl",
 		b."Business_Name",
 		b."Business_Image",
 		b."Background_Image",
 	    CASE WHEN  r."Name" like 'Channel Owner' THEN 1
 		     WHEN r."Name" like 'Admin' THEN 2 END RoleNo,
 	    ROW_NUMBER() OVER (PARTITION BY ci."Channel_Id" ORDER BY ci."Channel_Id" ) AS rn,
-		ls."Unique_Id",
+		ls.Unique_Id,
 		ls.EventName,
 		ls.EventDesc,
 		ls.EventImage,
@@ -70,34 +100,34 @@ join "User_Channel" uc on ci."Channel_Info_Id" = uc."Channel_Info_Id"
 join "AspNetUserRoles" ur on uc."UserId" = ur."UserId"
 join "AspNetRoles" r on ur."RoleId" = r."Id"
 join "AspNetUsers" u on uc."UserId" = u."Id"
-left join liveStream ls on ci."Channel_Info_Id" = ls."Channel_Info_Id" and ls.rn = 1
+left join liveStream ls on ci."Channel_Info_Id" = ls.Channel_Info_Id and ls.rn = 1
 WHERE r."Name" in('Channel Owner','Admin')
 and b."Is_Active" = 'Y';
 
 OPEN refcursor1 FOR
-select distinct e."Upcoming_Live_Stream_Id"
-	    ,e."Name"
-	    ,e."Description" Description
-	    ,e."Channel_Id" ChannelId
+select distinct e."Upcoming_Live_Stream_Id" "Upcoming_Live_Stream_Id"
+	    ,e."Name" "Name"
+	    ,e."Description" "Description"
+	    ,e."Channel_Id" "ChannelId"
 	    ,e."Media_Unique_Id"
-	    ,e."Start_Date_Time" StartDateTime
-	    ,e."End_Date_Time" EndDateTime
-	    ,e."User_Id"
-	    ,e."Event_Image" EventImage
-	    ,e."Desktop_Image_Url" DesktopImageUrl
-	    ,e."Mobile_Image_Url" MobileImageUrl
-	    ,e."Tablet_Image_Url" TabletImageUrl
-	    ,u."ImageUrl" User_Profile_Image
-	    ,u."ThumbnailImageUrl" User_Thumbnail_Image
-		,uc."Business_Name" 
-		,uc."Business_Image"
-		,uc."Background_Image"
-		,uc."Channel_Name"
-		,uc."Shortname" MerchantShortName
-		,e."Name" EventName
-		,e."Description" EventDesc
-		,e."Event_Video_Url" EventVideoUrl
-		,e."Event_Video_Gif_Url" EventVideoGifUrl
+	    ,e."Start_Date_Time" "StartDateTime"
+	    ,e."End_Date_Time" "EndDateTime"
+	    ,e."User_Id" "User_Id"
+	    ,e."Event_Image" "EventImage"
+	    ,e."Desktop_Image_Url" "DesktopImageUrl"
+	    ,e."Mobile_Image_Url" "MobileImageUrl"
+	    ,e."Tablet_Image_Url" "TabletImageUrl"
+	    ,u."ImageUrl" "User_Profile_Image"
+	    ,u."ThumbnailImageUrl" "User_Thumbnail_Image"
+		,uc."Business_Name"  "BusinessName"
+		,uc."Business_Image" "BusinessImage"
+		,uc."Background_Image" "BackgroundImage"
+		,uc."Channel_Name" "ChannelName"
+		,uc."Shortname" "MerchantShortName"
+		,e."Name" "EventName"
+		,e."Description" "EventDesc"
+		,e."Event_Video_Url" "EventVideoUrl"
+		,e."Event_Video_Gif_Url" "EventVideoGifUrl"
 from "Upcoming_Live_Stream" e
 join userChannel uc on e."Channel_Id" = uc."Channel_Id"
 left join "AspNetUsers" u on e."User_Id" = u."Id"
@@ -217,7 +247,7 @@ from userChannel;
 RETURN NEXT refcursor6;
 
 OPEN refcursor7 FOR
-select COALESCE(sum(ls."Like_Count"),0) LikeCount
+select COALESCE(sum(ls."Like_Count"),0) :: bigint LikeCount
 from "Live_Stream_Info" ls
 join "Upcoming_Live_Stream" ul on ls."Unique_Id" = ul."Media_Unique_Id"
 join "Channel_Info" ci on ls."Channel_Info_Id" = ci."Channel_Info_Id"
@@ -228,7 +258,7 @@ group by b."Business_Id";
 RETURN NEXT refcursor7;
 
 OPEN refcursor8 FOR
-select (select Count(*) TotalPost 
+select ((select Count(*) TotalPost 
 		from "MediaByUserAndChannel" m
 		join "Upcoming_Live_Stream" ul on m."Media_Unique_Id" = ul."Media_Unique_Id" 
 		join "Live_Stream_Info" ls on ul."Media_Unique_Id" = ls."Unique_Id"
@@ -241,7 +271,7 @@ select (select Count(*) TotalPost
 		from "Video_Channel" vc 
 		join "Business" b on vc."Business_Id" = b."Business_Id"
 		 join userChannel uc on b."Business_Id" = uc."Business_Id"
-		where  vc."Is_Active" = true) TotalPost;
+		where  vc."Is_Active" = true) ) :: integer TotalPost;
 RETURN NEXT refcursor8;
 
 END;
