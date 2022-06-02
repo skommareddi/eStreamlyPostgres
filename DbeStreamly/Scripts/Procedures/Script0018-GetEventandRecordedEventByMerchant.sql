@@ -15,7 +15,7 @@ select "Business_Id"
 	  ,"Shortname"
 	  ,"Background_Image"
 from "Business" b 
-where "Shortname" = shortName
+where Lower("Shortname") = Lower(shortName)
 and b."Is_Active" = 'Y';
 
 insert into businessList
@@ -32,7 +32,7 @@ from "Channel_Info" c
 join "Business" b on c."Business_Id" = b."Business_Id"
 join "User_Channel" uc on c."Channel_Info_Id" = uc."Channel_Info_Id"
 join "AspNetUsers" u on uc."UserId" = u."Id"
-where u."UserShortName" = shortName
+where Lower(u."UserShortName") = Lower(shortName)
 and b."Is_Active" = 'Y';
 
 DROP TABLE IF EXISTS liveStream;
@@ -244,7 +244,7 @@ left join (		select  b."Business_Id"
 				from "Follower" f
 				join "AspNetUsers" u on f."UserId" = u."Id"
 				join "Business" b on f."Business_Id" = b."Business_Id"
-				where b."Shortname" = shortName
+				where Lower(b."Shortname") = Lower(shortName) 
 				group by b."Business_Id") f on b."Business_Id" = f."Business_Id"
 cross join (select  COALESCE(sum(ls."Like_Count"),0) likeCount
 			from "Live_Stream_Info" ls
@@ -252,7 +252,7 @@ cross join (select  COALESCE(sum(ls."Like_Count"),0) likeCount
 			join "Channel_Info" ci on ls."Channel_Info_Id" = ci."Channel_Info_Id"
 			join "Business" b on ci."Business_Id" = b."Business_Id"
 			where ul."Is_Private_Event" = false
-			and b."Shortname" = shortName
+			and Lower(b."Shortname") = Lower(shortName)
 			group by b."Business_Id")	lc
 CROSS JOIN (select ((select Count(*) TotalPost 
 		from "MediaByUserAndChannel" m
@@ -260,13 +260,13 @@ CROSS JOIN (select ((select Count(*) TotalPost
 		join "Live_Stream_Info" ls on ul."Media_Unique_Id" = ls."Unique_Id"
 		join "Channel_Info" ci on ls."Channel_Info_Id" = ci."Channel_Info_Id"
 		join "Business" b on ci."Business_Id" = b."Business_Id"
-		where b."Shortname" = shortName
+		where Lower(b."Shortname") = Lower(shortName)
 		and ul."Is_Private_Event" = false and ul."Is_Active" = 'Y')  
 		+
 		(select Count(*) TotalPost
 		from "Video_Channel" vc 
 		join "Business" b on vc."Business_Id" = b."Business_Id"
-		where b."Shortname" = shortName
+		where Lower(b."Shortname") = Lower(shortName)
 		and vc."Is_Active" = false)) postCount) pc;
  RETURN NEXT refcursor3;		
 

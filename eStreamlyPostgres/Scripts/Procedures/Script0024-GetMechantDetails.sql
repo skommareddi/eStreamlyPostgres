@@ -24,7 +24,7 @@ select "Business_Id"
 	  ,"Shortname"
 	  ,"Background_Image"
 from "Business" b 
-where "Shortname" = shortName
+where Lower(b."Shortname") = Lower(shortName)
 and b."Is_Active" = 'Y';
 
 insert into businessList
@@ -41,7 +41,7 @@ from "Channel_Info" c
 join "Business" b on c."Business_Id" = b."Business_Id"
 join "User_Channel" uc on c."Channel_Info_Id" = uc."Channel_Info_Id"
 join "AspNetUsers" u on uc."UserId" = u."Id"
-where u."UserShortName" = shortName
+where Lower(u."UserShortName") = Lower(shortName)
 and b."Is_Active" = 'Y';
 
 DROP TABLE IF EXISTS liveStream;
@@ -322,7 +322,7 @@ join "Upcoming_Live_Stream" ul on ls."Unique_Id" = ul."Media_Unique_Id"
 join "Channel_Info" ci on ls."Channel_Info_Id" = ci."Channel_Info_Id"
 join "Business" b on ci."Business_Id" = b."Business_Id"
 where ul."Is_Private_Event" = false
-and b."Shortname" = shortName
+and Lower(b."Shortname") = Lower(shortName)
 group by b."Business_Id";
 RETURN NEXT refcursor4;
 
@@ -333,13 +333,13 @@ select (select Count(*) :: integer TotalPost
 		join "Live_Stream_Info" ls on ul."Media_Unique_Id" = ls."Unique_Id"
 		join "Channel_Info" ci on ls."Channel_Info_Id" = ci."Channel_Info_Id"
 		join "Business" b on ci."Business_Id" = b."Business_Id"
-		where b."Shortname" = shortName
+		where Lower(b."Shortname") = Lower(shortName)
 		and ul."Is_Private_Event" = false and ul."Is_Active" = 'Y') 
 		+
 		(select Count(*) TotalPost
 		from "Video_Channel" vc 
 		join "Business" b on vc."Business_Id" = b."Business_Id"
-		where b."Shortname" = shortName
+		where Lower(b."Shortname") = Lower(shortName)
 		and vc."Is_Active" = true) TotalPost;
 RETURN NEXT refcursor5;
 

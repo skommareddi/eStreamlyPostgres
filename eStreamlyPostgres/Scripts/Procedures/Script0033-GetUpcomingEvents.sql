@@ -31,7 +31,7 @@ select ul."Upcoming_Live_Stream_Id"
 	    ,ul."Start_Date_Time" StartDateTime
 	    ,ul."End_Date_Time" EndDateTime
 	    ,ul."User_Id"
-	    ,ul."Event_Image" EventImage
+	    ,ul."Event_Image" "EventImage"
 	    ,ul."Desktop_Image_Url" DesktopImageUrl
 	    ,ul."Mobile_Image_Url" MobileImageUrl
 	    ,ul."Tablet_Image_Url" TabletImageUrl
@@ -42,9 +42,10 @@ select ul."Upcoming_Live_Stream_Id"
 		,b."Background_Image" BackgroundImage
 		,ci."Channel_Name" ChannelName
 		,b."Shortname" MerchantShortName
-		,ul."Name" EventName
-		,ul."Description" EventDesc
+		,ul."Name" "EventName"
+		,ul."Description" "EventDesc"
 		,b."Business_Id"
+		,ci."Channel_Info_Id"
 --INTO #upcomingevent
 from "Upcoming_Live_Stream" ul
 join "Channel_Info" ci on ul."Channel_Id" = ci."Channel_Id"
@@ -89,10 +90,10 @@ select  ci."Channel_Id",
 	    CASE WHEN  r."Name" like 'Channel Owner' THEN 1
 		     WHEN r."Name" like 'Admin' THEN 2 END RoleNo,
 	    ROW_NUMBER() OVER (PARTITION BY ci."Channel_Id" ORDER BY ci."Channel_Id" ) AS rn,
-		ls.Unique_Id,
-		ls.EventName,
-		ls.EventDesc,
-		ls.EventImage,
+		ls."Media_Unique_Id" "Unique_Id",
+		ls."EventName",
+		ls."EventDesc",
+		ls."EventImage",
 		b."Shortname"
 from "Channel_Info" ci
 join "Business" b on ci."Business_Id" = b."Business_Id"
@@ -100,7 +101,7 @@ join "User_Channel" uc on ci."Channel_Info_Id" = uc."Channel_Info_Id"
 join "AspNetUserRoles" ur on uc."UserId" = ur."UserId"
 join "AspNetRoles" r on ur."RoleId" = r."Id"
 join "AspNetUsers" u on uc."UserId" = u."Id"
-left join liveStream ls on ci."Channel_Info_Id" = ls.Channel_Info_Id and ls.rn = 1
+join upcomingevent ls on ci."Channel_Info_Id" = ls."Channel_Info_Id" --and ls.rn = 1
 WHERE r."Name" in('Channel Owner','Admin')
 and b."Is_Active" = 'Y';
 
@@ -140,7 +141,7 @@ order by e."Start_Date_Time";
 RETURN NEXT refcursor1;
 
 OPEN refcursor2 FOR
-select  0 IsLive
+select distinct 0 IsLive
 	    ,ci."Channel_Id" ChannelId
 	    ,ci."Channel_Name" ChannelName
 	    ,m."Media_Item_Id"
@@ -174,7 +175,7 @@ left join "Upcoming_Live_Stream" ul on m."Media_Unique_Id" = ul."Media_Unique_Id
 where b."Is_Active" = 'Y'
 and (ul."Is_Private_Event" = false or ul."Is_Private_Event" is null)
 and (ul."Upcoming_Live_Stream_Id" is null or (ul."Upcoming_Live_Stream_Id" is not null and (ul."End_Date_Time" is null or ul."End_Date_Time" < NOW())))
-and ul."Is_Active" = 'Y'
+and COALESCE (ul."Is_Active",'Y') = 'Y'
 order by m."CreatedDate" desc;
 RETURN NEXT refcursor2;
 

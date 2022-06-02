@@ -188,7 +188,7 @@ left join "Product_Variant" pv on pvl."Product_Variant1_Id" = pv."Product_Varian
 left join "Product_Variant" pv1 on pvl."Product_Variant2_Id" = pv1."Product_Variant_Id"
 left join "Product_Image" pi on p."Product_Id" = pi."Product_Id" and pi."Position" = 1
 left join "Product_Category" pc on p."Product_Category_Id" = pc."Product_Category_Id"
-where UPPER(pc."Name") = 'TIP' and shortname <> 'italybestcoffee' and shortname <> 'istream';
+where UPPER(pc."Name") = 'TIP' and Lower(shortname) <> 'italybestcoffee' and  Lower(shortname)<> 'istream';
 
 OPEN refcursor1 FOR
 select p.BusinessId "BusinessId"
@@ -243,7 +243,7 @@ select pi."Product_Id" "ProductId"
 from "Product" p
 join "Product_Image" pi on p."Product_Id" = pi."Product_Id"
 join "Product_Category" pc on p."Product_Category_Id" = pc."Product_Category_Id"
-where UPPER(pc."Name") = 'TIP' and shortname <> 'italybestcoffee';
+where UPPER(pc."Name") = 'TIP' and Lower(shortname) <> 'italybestcoffee';
  RETURN NEXT refcursor2; 
  
 OPEN refcursor3 FOR
@@ -313,7 +313,7 @@ join "Channel_Info" ci on b."Business_Id" = ci."Business_Id"
 left join "Product_Variant_List" pvl on p."Product_Id" = pvl."Product_Id" and pvl."Position" = 1
 left join "Product_Image" pi on p."Product_Id" = pi."Product_Id" and pi."Position" = 1
 left join "Product_Category" pc on p."Product_Category_Id" = pc."Product_Category_Id"
-where UPPER(pc."Name") = 'TIP' and shortname <> 'italybestcoffee';
+where UPPER(pc."Name") = 'TIP' and Lower(shortname) <> 'italybestcoffee';
 
 insert into pollinfo
 select "Product_Id" "ProductId",json_build_object('ProductId',"Product_Id",

@@ -53,7 +53,7 @@ from (select pi."Poll_Info_Detail"
 			  ,DENSE_RANK() over (partition by (pi."Poll_Info_Detail" :: json->> 'Description') order by pi."Poll_Info_Id" asc ) rn
 			  ,pi."Poll_Type" "PollType"
 		from "Poll_Info" pi
-left join(select  pr."Response_Info" :: json->'QuestionResponse'->>'SelectedOption' as "SelectedOption"
+LEFT   JOIN LATERAL (select  pr."Response_Info" :: json->'QuestionResponse'->>'SelectedOption' as "SelectedOption"
 				,pr."Poll_Info_Id" 
 			from  "Poll_Responses" pr --on pi.Poll_Info_Id = pr.Poll_Info_Id
 		 ) pr on pi."Poll_Info_Id" = pr."Poll_Info_Id"
@@ -70,11 +70,11 @@ from poll p;
 DROP TABLE IF EXISTS pollques;
 CREATE TEMP TABLE pollques AS
 select pi."Question"
-	   ,c.value "Options",c.ordinality
+	   ,c.value "Options"
 from pollques1 pi
-cross join json_array_elements_text(pi."Options" :: json) with ordinality c
-group by pi."Question",c.value,c.ordinality
-order by pi."Question",c.value,c.ordinality;
+LEFT   JOIN LATERAL json_array_elements_text(pi."Options" :: json) with ordinality c on true
+group by pi."Question",c.value
+order by pi."Question",c.value;
 
 DROP TABLE IF EXISTS pollquesResult;
 CREATE TEMP TABLE pollquesResult AS
@@ -94,21 +94,30 @@ left join (select "Question"
 INSERT INTO PollResult(Question
 					   ,Options
 					   ,SelectedOption
-					   ,RespondCount)
-select  "Question"
-	   ,"Options"
-	   ,"SelectedOption"
-	   ,"RespondCount"
-from pollquesResult;
+					   ,RespondCount
+					   ,PollInfoId
+					  ,ChannelId
+					  ,PollUniqueId
+					  ,PollType)
+select  pr."Question"
+	   ,pr."Options"
+	   ,pr."SelectedOption"
+	   ,pr."RespondCount"
+	   , p."Poll_Info_Id"
+	   ,p."ChannelId"
+	   ,p."PollUniqueId"
+	   ,p."PollType"
+from pollquesResult pr
+join poll p on pr."Question" = p."Question";
 
-update PollResult  set PollInfoId = p."Poll_Info_Id"
-					 ,ChannelId = p."ChannelId"
-					 ,PollUniqueId = p."PollUniqueId"
-					 ,PollType = p."PollType"
---select *
-from poll p 
-left join PollResult pr on pr.Question = p."Question"-- and pr.Options = p.SelectedOption 
-where p.rn = 1;
+-- update PollResult  set PollInfoId = p."Poll_Info_Id"
+-- 					 ,ChannelId = p."ChannelId"
+-- 					 ,PollUniqueId = p."PollUniqueId"
+-- 					 ,PollType = p."PollType"
+-- --select *
+-- from poll p 
+-- left join PollResult pr on pr.Question = p."Question"-- and pr.Options = p.SelectedOption 
+-- where p.rn = 1;
 
 DROP TABLE IF EXISTS PollInfoResult;
 CREATE TEMP TABLE PollInfoResult AS

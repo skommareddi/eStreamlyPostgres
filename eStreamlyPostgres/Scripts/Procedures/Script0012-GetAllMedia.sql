@@ -37,11 +37,11 @@ BEGIN
 				join public."Business" b on ci."Business_Id" = b."Business_Id"
 				left join public."AspNetUsers" u on m."User_Id" = u."Id"
 				left join public."Upcoming_Live_Stream" ul on m."Media_Unique_Id" = ul."Media_Unique_Id"
-				where (ul."Is_Private_Event" = true or ul."Is_Private_Event" is null)
+				where (ul."Is_Private_Event" = false or ul."Is_Private_Event" is null)
 				and (ul."Upcoming_Live_Stream_Id" is null or (ul."Upcoming_Live_Stream_Id" is not null and (ul."End_Date_Time" is null or ul."End_Date_Time" < NOW())))
 				and (ul."Is_Active"  is null or ul."Is_Active" = 'Y')
 				order by m."CreatedDate" desc
-				LIMIT pageSize OFFSET pageNumber;
+				Offset pageNumber * pageSize LIMIT pageSize;
 RETURN ref;
 END
 $$ LANGUAGE plpgsql;
