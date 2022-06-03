@@ -25,23 +25,23 @@ DROP TABLE IF EXISTS upcomingevent;
 CREATE TEMP TABLE upcomingevent AS
 select ul."Upcoming_Live_Stream_Id"
 	    ,ul."Name"
-	    ,ul."Description" Description
-	    ,ul."Channel_Id" ChannelId
+	    ,ul."Description" "Description"
+	    ,ul."Channel_Id" "ChannelId"
 	    ,ul."Media_Unique_Id"
-	    ,ul."Start_Date_Time" StartDateTime
-	    ,ul."End_Date_Time" EndDateTime
+	    ,ul."Start_Date_Time" "StartDateTime"
+	    ,ul."End_Date_Time" "EndDateTime"
 	    ,ul."User_Id"
 	    ,ul."Event_Image" "EventImage"
-	    ,ul."Desktop_Image_Url" DesktopImageUrl
-	    ,ul."Mobile_Image_Url" MobileImageUrl
-	    ,ul."Tablet_Image_Url" TabletImageUrl
-	    ,u."ImageUrl" User_Profile_Image
-	    ,u."ThumbnailImageUrl" User_Thumbnail_Image
-		,b."Business_Name" BusinessName 
-		,b."Business_Image" BusinessImage
-		,b."Background_Image" BackgroundImage
-		,ci."Channel_Name" ChannelName
-		,b."Shortname" MerchantShortName
+	    ,ul."Desktop_Image_Url" "DesktopImageUrl"
+	    ,ul."Mobile_Image_Url" "MobileImageUrl"
+	    ,ul."Tablet_Image_Url" "TabletImageUrl"
+	    ,u."ImageUrl" "User_Profile_Image"
+	    ,u."ThumbnailImageUrl" "User_Thumbnail_Image"
+		,b."Business_Name" "BusinessName" 
+		,b."Business_Image" "BusinessImage"
+		,b."Background_Image" "BackgroundImage"
+		,ci."Channel_Name" "ChannelName"
+		,b."Shortname" "MerchantShortName"
 		,ul."Name" "EventName"
 		,ul."Description" "EventDesc"
 		,b."Business_Id"
@@ -77,16 +77,16 @@ DROP TABLE IF EXISTS userChannel;
 CREATE TEMP TABLE userChannel AS
 select  ci."Channel_Id",
 		ci."Channel_Info_Id",
-		ci."Business_Id",
+		ci."Business_Id" BusinessId,
 		uc."UserId",
 		r."Name",
 		ci."Channel_Name",
 		ci."Channel_Desc",
 		COALESCE(u."ImageUrl",b."Business_Image") "ImageUrl",
 		COALESCE(u."ThumbnailImageUrl",b."Background_Image") "ThumbnailImageUrl",
-		b."Business_Name",
-		b."Business_Image",
-		b."Background_Image",
+		b."Business_Name" "BusinessName",
+		b."Business_Image" "BusinessImage", 
+		b."Background_Image" "BackgroundImage",
 	    CASE WHEN  r."Name" like 'Channel Owner' THEN 1
 		     WHEN r."Name" like 'Admin' THEN 2 END RoleNo,
 	    ROW_NUMBER() OVER (PARTITION BY ci."Channel_Id" ORDER BY ci."Channel_Id" ) AS rn,
@@ -94,7 +94,9 @@ select  ci."Channel_Id",
 		ls."EventName",
 		ls."EventDesc",
 		ls."EventImage",
-		b."Shortname"
+		b."Shortname",
+		b."Business_Description" "BusinessDescription",
+		b."Business_Url" "BusinessUrl"
 from "Channel_Info" ci
 join "Business" b on ci."Business_Id" = b."Business_Id"
 join "User_Channel" uc on ci."Channel_Info_Id" = uc."Channel_Info_Id"
@@ -120,9 +122,9 @@ select distinct e."Upcoming_Live_Stream_Id" "Upcoming_Live_Stream_Id"
 	    ,e."Tablet_Image_Url" "TabletImageUrl"
 	    ,u."ImageUrl" "User_Profile_Image"
 	    ,u."ThumbnailImageUrl" "User_Thumbnail_Image"
-		,uc."Business_Name"  "BusinessName"
-		,uc."Business_Image" "BusinessImage"
-		,uc."Background_Image" "BackgroundImage"
+		,uc."BusinessName"  "BusinessName"
+		,uc."BusinessImage" "BusinessImage"
+		,uc."BackgroundImage" "BackgroundImage"
 		,uc."Channel_Name" "ChannelName"
 		,uc."Shortname" "MerchantShortName"
 		,e."Name" "EventName"
@@ -170,7 +172,7 @@ join "Live_Stream_Info" ls on m."Media_Unique_Id" = ls."Unique_Id"
 join "Channel_Info" ci on ls."Channel_Info_Id" = ci."Channel_Info_Id" 
 join "Business" b on ci."Business_Id" = b."Business_Id"
 join "AspNetUsers" u on m."User_Id" = u."Id"
-join userChannel uc on b."Business_Id" = uc."Business_Id"
+join userChannel uc on b."Business_Id" = uc.BusinessId
 left join "Upcoming_Live_Stream" ul on m."Media_Unique_Id" = ul."Media_Unique_Id"
 where b."Is_Active" = 'Y'
 and (ul."Is_Private_Event" = false or ul."Is_Private_Event" is null)
@@ -253,7 +255,7 @@ from "Live_Stream_Info" ls
 join "Upcoming_Live_Stream" ul on ls."Unique_Id" = ul."Media_Unique_Id"
 join "Channel_Info" ci on ls."Channel_Info_Id" = ci."Channel_Info_Id"
 join "Business" b on ci."Business_Id" = b."Business_Id"
-join userChannel uc on b."Business_Id" = uc."Business_Id"
+join userChannel uc on b."Business_Id" = uc.BusinessId
 where ul."Is_Private_Event" = false
 group by b."Business_Id";
 RETURN NEXT refcursor7;
@@ -265,13 +267,13 @@ select ((select Count(*) TotalPost
 		join "Live_Stream_Info" ls on ul."Media_Unique_Id" = ls."Unique_Id"
 		join "Channel_Info" ci on ls."Channel_Info_Id" = ci."Channel_Info_Id"
 		join "Business" b on ci."Business_Id" = b."Business_Id"
-		join userChannel uc on b."Business_Id" = uc."Business_Id"
+		join userChannel uc on b."Business_Id" = uc.BusinessId
 		where ul."Is_Private_Event" = false and ul."Is_Active" = 'Y') 
 		+
 		(select Count(*) TotalPost
 		from "Video_Channel" vc 
 		join "Business" b on vc."Business_Id" = b."Business_Id"
-		 join userChannel uc on b."Business_Id" = uc."Business_Id"
+		 join userChannel uc on b."Business_Id" = uc.BusinessId
 		where  vc."Is_Active" = true) ) :: integer TotalPost;
 RETURN NEXT refcursor8;
 

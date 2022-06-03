@@ -253,10 +253,10 @@ select pd."Product_Id" "ProductId"
 	  ,pd."Interval_Count" "IntervalCount"
 	  ,pd."Stripe_Price_Id" "StripePriceId"
 	  ,pd."Subscription_Name" "SubscriptionName"
-	  ,pd."Product_Variant_List_Id" "ProductVariantListId"
+	  ,pd."product_variant_list_Id" "ProductVariantListId"
 from "Product" p
 join "Subscription_Price" pd on p."Product_Id" = pd."Product_Id"
-join "Product_Variant_List" pvl on pd."Product_Variant_List_Id" = pvl."Product_Variant_List_Id"
+join "Product_Variant_List" pvl on pd."product_variant_list_Id" = pvl."Product_Variant_List_Id"
 join productList up on p."Product_Id" = up.Product_Id
 where pd."Is_Active" = true
 and pvl."Status" = 'active';

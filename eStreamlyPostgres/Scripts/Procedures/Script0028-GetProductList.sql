@@ -195,10 +195,10 @@ and (p."Product_Category_Id" = productCategoryId or productCategoryId is null) a
 	  ,pd."Interval_Count" IntervalCount
 	  ,pd."Stripe_Price_Id" StripePriceId
 	  ,pd."Subscription_Name" SubscriptionName
-	  ,pd."Product_Variant_List_Id" ProductVariantListId
+	  ,pd."product_variant_list_Id" ProductVariantListId
 from "Product" p
 join "Subscription_Price" pd on p."Product_Id" = pd."Product_Id"
-join "Product_Variant_List" pvl on pd."Product_Variant_List_Id" = pvl."Product_Variant_List_Id"
+join "Product_Variant_List" pvl on pd."product_variant_list_Id" = pvl."Product_Variant_List_Id"
 where p."Business_Id" = businessId
 and (p."Product_Category_Id" = productCategoryId or productCategoryId is null) and p."Status" = 'active'
 and pd."Is_Active" = '1';
