@@ -203,8 +203,7 @@ select * from
 	where b."Is_Active" = 'Y'
 	and (ul."Is_Private_Event" = false or ul."Is_Private_Event" is null)
 	and (ul."Upcoming_Live_Stream_Id" is null or (ul."Upcoming_Live_Stream_Id" is not null and (ul."End_Date_Time" is null or ul."End_Date_Time" < NOW())))
-	and ul."Is_Active" = 'Y'
-
+	and COALESCE(ul."Is_Active",'Y' )= 'Y'
 	UNION 
 	select  0 IsLive
 			,ci."Channel_Id" ChannelId
@@ -329,12 +328,12 @@ RETURN NEXT refcursor4;
 OPEN refcursor5 FOR
 select (select Count(*) :: integer TotalPost 
 		from "MediaByUserAndChannel" m
-		join "Upcoming_Live_Stream" ul on m."Media_Unique_Id" = ul."Media_Unique_Id" 
-		join "Live_Stream_Info" ls on ul."Media_Unique_Id" = ls."Unique_Id"
-		join "Channel_Info" ci on ls."Channel_Info_Id" = ci."Channel_Info_Id"
-		join "Business" b on ci."Business_Id" = b."Business_Id"
+		left join "Upcoming_Live_Stream" ul on m."Media_Unique_Id" = ul."Media_Unique_Id" 
+		left join "Live_Stream_Info" ls on ul."Media_Unique_Id" = ls."Unique_Id"
+		left join "Channel_Info" ci on ls."Channel_Info_Id" = ci."Channel_Info_Id"
+		left join "Business" b on ci."Business_Id" = b."Business_Id"
 		where Lower(b."Shortname") = Lower(shortName)
-		and ul."Is_Private_Event" = false and ul."Is_Active" = 'Y') 
+		and COALESCE(ul."Is_Private_Event",false) = false and COALESCE(ul."Is_Active",'Y' )= 'Y') 
 		+
 		(select Count(*) TotalPost
 		from "Video_Channel" vc 

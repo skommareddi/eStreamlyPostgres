@@ -2,7 +2,24 @@
 	channelid1 character varying,
 	channelinfoid1 bigint,
 	businessid1 bigint)
-    RETURNS TABLE(channelinfoid bigint, channelid character varying, userid character varying, businessid bigint, channeldesc character varying, channelname character varying, imageurl character varying, thumbnailimageurl character varying, businessname character varying, businessimage character varying, backgroundimage character varying, liveuniqueid character varying, eventname character varying, eventdesc character varying, eventimage character varying, shortname character varying, businessdescription character varying, businessurl character varying) 
+    RETURNS TABLE(ChannelInfoId bigint, 
+				  ChannelId character varying,
+				  UserId character varying,
+				  BusinessId bigint, 
+				  ChannelDesc character varying,
+				  ChannelName character varying,
+				  ImageUrl character varying,
+				  ThumbnailImageUrl character varying,
+				  BusinessName character varying,
+				  BusinessImage character varying,
+				  BackgroundImage character varying,
+				  UniqueId character varying,
+				  EventName character varying,
+				  EventDesc character varying,
+				  EventImage character varying,
+				  Shortname character varying,
+				  BusinessDescription character varying,
+				  BusinessUrl character varying) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -11,7 +28,8 @@
 AS $BODY$
 	DECLARE 
      BEGIN
-    
+	 
+DROP TABLE IF EXISTS liveStream;
 CREATE TEMP TABLE liveStream(Channel_Info_Id bigint not null,
 						 Unique_Id varchar(250),
 						 rn bigint,
@@ -81,24 +99,24 @@ WHERE r."Name" in('Channel Owner','Admin') or r."Name" is null or r."Name" = ''
 )
 --select * from #userChannel
 
-select u."Channel_Info_Id" ChannelInfoId,
-		u."Channel_Id" ChannelId,		
+select u."Channel_Info_Id" "ChannelInfoId",
+		u."Channel_Id" "ChannelId",		
 		u."UserId",
-		u."Business_Id" BusinessId,		
-		u."Channel_Desc" ChannelDesc,
-		u."Channel_Name" ChannelName,
-		u.ImageUrl ImageUrl,
-		u.ThumbnailImageUrl ThumbnailImageUrl,
-	    u."Business_Name" BusinessName,
-	    u."Business_Image" BusinessImage,
-		u."Background_Image" BackgroundImage,
-		u.Unique_Id LiveUniqueId,
-		u.EventName,
-		u.EventDesc,
-		u.EventImage,
+		u."Business_Id" "BusinessId",		
+		u."Channel_Desc" "ChannelDesc",
+		u."Channel_Name" "ChannelName",
+		u.ImageUrl "ImageUrl",
+		u.ThumbnailImageUrl "ThumbnailImageUrl",
+	    u."Business_Name" "BusinessName",
+	    u."Business_Image" "BusinessImage",
+		u."Background_Image" "BackgroundImage",
+		u.Unique_Id "LiveUniqueId",
+		u.EventName "EventName",
+		u.EventDesc "EventDesc",
+		u.EventImage "EventImage",
 		u."Shortname",
-		u.BusinessDescription,
-		u.BusinessUrl
+		u.BusinessDescription "BusinessDescription",
+		u.BusinessUrl "BusinessUrl"
 from userChannel u
 where rn = 1 
 and (u."Channel_Id" = channelid1 or channelid1 is null)
@@ -126,6 +144,5 @@ group by  "Channel_Id",
 		u.BusinessUrl
 order by "Channel_Id",RoleNo;
 
-DROP TABLE liveStream;
 END; 
 $BODY$;
