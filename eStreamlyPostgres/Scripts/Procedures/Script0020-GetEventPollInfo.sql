@@ -53,7 +53,7 @@ from (select pi."Poll_Info_Detail"
 			  ,DENSE_RANK() over (partition by (pi."Poll_Info_Detail" :: json->> 'Description') order by pi."Poll_Info_Id" asc ) rn
 			  ,pi."Poll_Type" "PollType"
 		from "Poll_Info" pi
-LEFT   JOIN LATERAL (select  pr."Response_Info" :: json->'QuestionResponse'->>'SelectedOption' as "SelectedOption"
+LEFT JOIN LATERAL (select  pr."Response_Info" :: json->'QuestionResponse'->>'SelectedOption' as "SelectedOption"
 				,pr."Poll_Info_Id" 
 			from  "Poll_Responses" pr --on pi.Poll_Info_Id = pr.Poll_Info_Id
 		 ) pr on pi."Poll_Info_Id" = pr."Poll_Info_Id"

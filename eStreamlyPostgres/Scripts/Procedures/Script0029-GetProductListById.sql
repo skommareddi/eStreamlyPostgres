@@ -169,6 +169,7 @@ select p."Product_Id" ProductId
 	  ,CASE WHEN pd."Max_Order_Amount" > 0 and pd."Shipping_Amount" > 0 THEN 'Free US standard shipping for orders valued at $'|| cast(pd."Max_Order_Amount" as varchar(50))||' or more </br> $' || cast(pd."Shipping_Amount" as varchar(50))||' Standard Flat Rate Shipping' 
 		WHEN pd."Max_Order_Amount" > 0 THEN 'Free US standard shipping for orders valued at $'|| cast(pd."Max_Order_Amount" as varchar(50))||' or more </br>' 
 		WHEN pd."Shipping_Amount" > 0 THEN '$' || cast(pd."Shipping_Amount" as varchar(50))||' Standard Flat Rate Shipping' 
+		WHEN pd.Max_Order_Amount = 0 and pd.Shipping_Amount = 0 THEN 'FREE Shipping on all orders'
 	  ELSE '' 
 	  END ShippingSummary
 from "Product" p
