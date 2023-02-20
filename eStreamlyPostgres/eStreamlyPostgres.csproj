@@ -76,4 +76,19 @@
     <PackageReference Include="dbup-postgresql" Version="4.6.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Scripts\Procedures\generatevideositemap.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>generatevideositemap.sql</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Scripts\Procedures\generatevideositemap.sql">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>generatevideositemap.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
 </Project>
