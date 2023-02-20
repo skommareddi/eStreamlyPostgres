@@ -1,4 +1,7 @@
-﻿
+﻿-- Table: public.Business_Payment_Methods
+
+-- DROP TABLE IF EXISTS public."Business_Payment_Methods";
+
 CREATE TABLE IF NOT EXISTS public."Business_Payment_Methods"
 (
     "Business_Payment_Method_Id" bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
@@ -17,11 +20,7 @@ CREATE TABLE IF NOT EXISTS public."Business_Payment_Methods"
         REFERENCES public."Business" ("Business_Id") MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
+);
 
 CREATE INDEX IF NOT EXISTS "PK_Business_Payment_Methods"
     ON public."Business_Payment_Methods" USING btree

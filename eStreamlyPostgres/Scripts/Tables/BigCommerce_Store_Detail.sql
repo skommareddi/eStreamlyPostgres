@@ -31,8 +31,4 @@
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
         NOT VALID
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
+);

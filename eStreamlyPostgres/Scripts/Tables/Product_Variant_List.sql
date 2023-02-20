@@ -1,4 +1,7 @@
-﻿
+﻿-- Table: public.Product_Variant_List
+
+-- DROP TABLE IF EXISTS public."Product_Variant_List";
+
 CREATE TABLE IF NOT EXISTS public."Product_Variant_List"
 (
     "Product_Variant_List_Id" bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
@@ -36,11 +39,10 @@ CREATE TABLE IF NOT EXISTS public."Product_Variant_List"
         REFERENCES public."Product_Variant" ("Product_Variant_Id") MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
+);
+-- Index: PK_Product_Variant_List
+
+-- DROP INDEX IF EXISTS public."PK_Product_Variant_List";
 
 CREATE INDEX IF NOT EXISTS "PK_Product_Variant_List"
     ON public."Product_Variant_List" USING btree

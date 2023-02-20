@@ -10,11 +10,7 @@ CREATE TABLE IF NOT EXISTS public."AspNetUserTokens"
         REFERENCES public."AspNetUsers" ("Id") MATCH SIMPLE
         ON UPDATE CASCADE
         ON DELETE NO ACTION
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
+);
 
 CREATE INDEX IF NOT EXISTS "PK_AspNetUserTokens"
     ON public."AspNetUserTokens" USING btree

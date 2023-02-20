@@ -1,4 +1,7 @@
-﻿
+﻿-- Table: public.Facebook_Stream_Detail
+
+-- DROP TABLE IF EXISTS public."Facebook_Stream_Detail";
+
 CREATE TABLE IF NOT EXISTS public."Facebook_Stream_Detail"
 (
     "Facebook_Stream_Detail_Id" bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
@@ -17,6 +20,10 @@ CREATE TABLE IF NOT EXISTS public."Facebook_Stream_Detail"
     "Modified_Date" timestamp with time zone,
     "Modified_By" character varying COLLATE pg_catalog."default",
     "Record_Version" numeric NOT NULL DEFAULT 1,
+    "Access_Token" character varying COLLATE pg_catalog."default",
+    "Is_Expired" character varying COLLATE pg_catalog."default" DEFAULT 'N'::character varying,
+    "Page_Access_Token" character varying COLLATE pg_catalog."default",
+    "Group_Access_Token" character varying COLLATE pg_catalog."default",
     CONSTRAINT pk_facebook_stream_detail PRIMARY KEY ("Facebook_Stream_Detail_Id"),
     CONSTRAINT facebookstreamdetail_fk_businessid FOREIGN KEY ("Business_Id")
         REFERENCES public."Business" ("Business_Id") MATCH SIMPLE
@@ -26,11 +33,7 @@ CREATE TABLE IF NOT EXISTS public."Facebook_Stream_Detail"
         REFERENCES public."AspNetUsers" ("Id") MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
+);
 
 CREATE INDEX IF NOT EXISTS "PK_Facebook_Stream_Detail"
     ON public."Facebook_Stream_Detail" USING btree

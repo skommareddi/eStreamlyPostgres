@@ -1,4 +1,7 @@
-﻿
+﻿-- Table: public.Customer_Order
+
+-- DROP TABLE IF EXISTS public."Customer_Order";
+
 CREATE TABLE IF NOT EXISTS public."Customer_Order"
 (
     "Customer_Order_Id" bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
@@ -46,11 +49,10 @@ CREATE TABLE IF NOT EXISTS public."Customer_Order"
         REFERENCES public."Customer" ("Customer_Id") MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
+);
+-- Index: PK_Customer_Order
+
+-- DROP INDEX IF EXISTS public."PK_Customer_Order";
 
 CREATE INDEX IF NOT EXISTS "PK_Customer_Order"
     ON public."Customer_Order" USING btree

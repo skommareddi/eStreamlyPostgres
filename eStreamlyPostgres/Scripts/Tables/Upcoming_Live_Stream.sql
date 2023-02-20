@@ -1,4 +1,7 @@
-﻿
+﻿-- Table: public.Upcoming_Live_Stream
+
+-- DROP TABLE IF EXISTS public."Upcoming_Live_Stream";
+
 CREATE TABLE IF NOT EXISTS public."Upcoming_Live_Stream"
 (
     "Upcoming_Live_Stream_Id" bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
@@ -25,17 +28,25 @@ CREATE TABLE IF NOT EXISTS public."Upcoming_Live_Stream"
     "Keywords" character varying COLLATE pg_catalog."default",
     "Is_Live_Stream_Available" boolean DEFAULT false,
     "Is_Recording_Available" boolean DEFAULT false,
-    CONSTRAINT pk_upcoming_livestream PRIMARY KEY ("Upcoming_Live_Stream_Id")
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
+    "Channel_Info_Id" bigint,
+    CONSTRAINT pk_upcoming_livestream PRIMARY KEY ("Upcoming_Live_Stream_Id"),
+    CONSTRAINT upcominglivestream_fk_channelinfoid FOREIGN KEY ("Channel_Info_Id")
+        REFERENCES public."Channel_Info" ("Channel_Info_Id") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID
+);
+-- Index: PK_Upcoming_LiveStream
+
+-- DROP INDEX IF EXISTS public."PK_Upcoming_LiveStream";
 
 CREATE INDEX IF NOT EXISTS "PK_Upcoming_LiveStream"
     ON public."Upcoming_Live_Stream" USING btree
     ("Upcoming_Live_Stream_Id" ASC NULLS LAST)
     TABLESPACE pg_default;
+-- Index: Upcoming_Live_Stream_Unique_Id
+
+-- DROP INDEX IF EXISTS public."Upcoming_Live_Stream_Unique_Id";
 
 CREATE INDEX IF NOT EXISTS "Upcoming_Live_Stream_Unique_Id"
     ON public."Upcoming_Live_Stream" USING btree

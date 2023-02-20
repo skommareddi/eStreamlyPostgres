@@ -1,4 +1,7 @@
-﻿
+﻿-- Table: public.Poll_Responses
+
+-- DROP TABLE IF EXISTS public."Poll_Responses";
+
 CREATE TABLE IF NOT EXISTS public."Poll_Responses"
 (
     "Poll_Response_Id" bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
@@ -19,11 +22,10 @@ CREATE TABLE IF NOT EXISTS public."Poll_Responses"
         REFERENCES public."AspNetUsers" ("Id") MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
+);
+-- Index: PK_Poll_Responses
+
+-- DROP INDEX IF EXISTS public."PK_Poll_Responses";
 
 CREATE INDEX IF NOT EXISTS "PK_Poll_Responses"
     ON public."Poll_Responses" USING btree

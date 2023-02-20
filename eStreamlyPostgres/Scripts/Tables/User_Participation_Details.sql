@@ -1,4 +1,7 @@
-﻿
+﻿-- Table: public.User_Participation_Details
+
+-- DROP TABLE IF EXISTS public."User_Participation_Details";
+
 CREATE TABLE IF NOT EXISTS public."User_Participation_Details"
 (
     "User_Participation_Id" bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
@@ -16,11 +19,10 @@ CREATE TABLE IF NOT EXISTS public."User_Participation_Details"
     "Product_Id_List" character varying COLLATE pg_catalog."default",
     "Customer_Id" character varying COLLATE pg_catalog."default",
     CONSTRAINT pk_user_participation_details PRIMARY KEY ("User_Participation_Id")
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
+);
+-- Index: PK_User_Participation_Details
+
+-- DROP INDEX IF EXISTS public."PK_User_Participation_Details";
 
 CREATE INDEX IF NOT EXISTS "PK_User_Participation_Details"
     ON public."User_Participation_Details" USING btree

@@ -15,14 +15,11 @@
     "Modified_Date" timestamp with time zone,
     "Modified_By" character varying COLLATE pg_catalog."default",
     "Record_Version" numeric NOT NULL DEFAULT 1,
+    "Calculated_Price" numeric,
     CONSTRAINT "pk_BigCommerce_Product_Variant" PRIMARY KEY ("Product_Variant_Id"),
     CONSTRAINT bigcommerceproductvariant_fk_productid FOREIGN KEY ("Product_Id")
         REFERENCES public."BigCommerce_Product" ("Product_Id") MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
         NOT VALID
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
+);

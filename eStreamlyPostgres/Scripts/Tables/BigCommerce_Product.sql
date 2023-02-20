@@ -19,9 +19,6 @@
     "Modified_By" character varying COLLATE pg_catalog."default",
     "Record_Version" numeric NOT NULL DEFAULT 1,
     "Business_Id" bigint,
+    "Calculated_Price" numeric,
     CONSTRAINT "pk_BigCommerce_Product" PRIMARY KEY ("Product_Id")
 )
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;

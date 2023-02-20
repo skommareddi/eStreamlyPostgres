@@ -6,11 +6,7 @@ CREATE TABLE IF NOT EXISTS public."AspNetRoles"
     "NormalizedName" character varying COLLATE pg_catalog."default",
     "ConcurrencyStamp" character varying COLLATE pg_catalog."default",
     CONSTRAINT pk_aspnetroles PRIMARY KEY ("Id")
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
+);
 
 CREATE INDEX IF NOT EXISTS "PK_AspNetRoles"
     ON public."AspNetRoles" USING btree

@@ -1,5 +1,4 @@
-﻿
-CREATE TABLE IF NOT EXISTS public."Business"
+﻿CREATE TABLE IF NOT EXISTS public."Business"
 (
     "Business_Id" bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
     "UserName" character varying COLLATE pg_catalog."default" NOT NULL,
@@ -29,18 +28,18 @@ CREATE TABLE IF NOT EXISTS public."Business"
     "PaymentGateway_Api_Login_Id" character varying COLLATE pg_catalog."default",
     "PaymentGateway_Transaction_Key" character varying COLLATE pg_catalog."default",
     "Store_Url" character varying COLLATE pg_catalog."default",
+    "Is_Shipping_to_USA" boolean,
+    "Is_Completed" boolean,
     CONSTRAINT pk_business PRIMARY KEY ("Business_Id")
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
-
+);
 
 CREATE INDEX IF NOT EXISTS "PK_Business"
     ON public."Business" USING btree
     ("Business_Id" ASC NULLS LAST)
     TABLESPACE pg_default;
+-- Index: Shortname
+
+-- DROP INDEX IF EXISTS public."Shortname";
 
 CREATE INDEX IF NOT EXISTS "Shortname"
     ON public."Business" USING btree

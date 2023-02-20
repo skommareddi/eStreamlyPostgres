@@ -22,7 +22,3 @@ CREATE TABLE IF NOT EXISTS public."BigCommerce_Checkout_Detail"
     "Status" character varying COLLATE pg_catalog."default",
     CONSTRAINT "BigCommerce_Checkout_Detail_pkey" PRIMARY KEY ("BigCommerce_Checkout_Detail_Id")
 )
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;

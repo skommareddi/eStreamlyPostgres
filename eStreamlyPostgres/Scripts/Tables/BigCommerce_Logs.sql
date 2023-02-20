@@ -19,11 +19,7 @@ CREATE TABLE IF NOT EXISTS public."BigCommerce_Logs"
     "Modified_By" character varying COLLATE pg_catalog."default",
     "Record_Version" numeric NOT NULL DEFAULT 1,
     CONSTRAINT pk_bigcommerce_logs PRIMARY KEY ("BigCommerce_Log_Id")
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
+);
 
 CREATE INDEX IF NOT EXISTS "PK_BigCommerce_Logs"
     ON public."BigCommerce_Logs" USING btree

@@ -1,4 +1,7 @@
-﻿
+﻿-- Table: public.Channel_Info
+
+-- DROP TABLE IF EXISTS public."Channel_Info";
+
 CREATE TABLE IF NOT EXISTS public."Channel_Info"
 (
     "Channel_Info_Id" bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
@@ -16,23 +19,24 @@ CREATE TABLE IF NOT EXISTS public."Channel_Info"
     "PlaybackUrl" character varying COLLATE pg_catalog."default",
     "Record_Version" numeric NOT NULL DEFAULT 1,
     CONSTRAINT pk_channel_info PRIMARY KEY ("Channel_Info_Id")
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
-
+);
+-- DROP INDEX IF EXISTS public."NonClusteredIndex-20210827-100012";
 
 CREATE INDEX IF NOT EXISTS "NonClusteredIndex-20210827-100012"
     ON public."Channel_Info" USING btree
     ("Channel_Id" COLLATE pg_catalog."default" ASC NULLS LAST)
     TABLESPACE pg_default;
+-- Index: NonClusteredIndex-20210827-100027
 
+-- DROP INDEX IF EXISTS public."NonClusteredIndex-20210827-100027";
 
 CREATE INDEX IF NOT EXISTS "NonClusteredIndex-20210827-100027"
     ON public."Channel_Info" USING btree
     ("Channel_Info_Id" ASC NULLS LAST)
     TABLESPACE pg_default;
+-- Index: PK_Channel_Info
+
+-- DROP INDEX IF EXISTS public."PK_Channel_Info";
 
 CREATE INDEX IF NOT EXISTS "PK_Channel_Info"
     ON public."Channel_Info" USING btree

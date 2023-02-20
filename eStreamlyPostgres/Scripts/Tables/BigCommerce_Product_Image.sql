@@ -22,8 +22,4 @@
         REFERENCES public."BigCommerce_Product" ("Product_Id") MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
+);

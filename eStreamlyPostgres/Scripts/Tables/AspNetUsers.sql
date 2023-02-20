@@ -23,11 +23,7 @@ CREATE TABLE IF NOT EXISTS public."AspNetUsers"
     "Created_Date" timestamp with time zone,
     "Password_Modified_Date" timestamp with time zone,
     CONSTRAINT pk_aspnetusers PRIMARY KEY ("Id")
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
+);
 
 CREATE INDEX IF NOT EXISTS "EmailIndex"
     ON public."AspNetUsers" USING btree

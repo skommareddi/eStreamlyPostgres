@@ -10,11 +10,7 @@ CREATE TABLE IF NOT EXISTS public."AspNetUserLogins"
         REFERENCES public."AspNetUsers" ("Id") MATCH SIMPLE
         ON UPDATE CASCADE
         ON DELETE NO ACTION
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
+);
 
 CREATE INDEX IF NOT EXISTS "IX_AspNetUserLogins_UserId"
     ON public."AspNetUserLogins" USING btree

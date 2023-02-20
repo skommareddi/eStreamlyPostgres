@@ -14,8 +14,4 @@
     "Is_Uninstalled" boolean,
     "Store_Hash" character varying COLLATE pg_catalog."default",
     CONSTRAINT "BigCommerce_App_Config_pkey" PRIMARY KEY ("BigCommerce_App_Config_Id")
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
+);

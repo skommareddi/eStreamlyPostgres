@@ -13,8 +13,4 @@ CREATE TABLE IF NOT EXISTS public."Api_Method_Logs"
     "Modified_By" character varying COLLATE pg_catalog."default",
     "Record_Version" numeric NOT NULL DEFAULT 1,
     CONSTRAINT "Api_Method_Logs_pkey" PRIMARY KEY ("Api_Method_Logs_Id")
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
+);

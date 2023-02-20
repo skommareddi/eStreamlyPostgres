@@ -1,4 +1,7 @@
-﻿
+﻿-- Table: public.Customer_Order_Detail
+
+-- DROP TABLE IF EXISTS public."Customer_Order_Detail";
+
 CREATE TABLE IF NOT EXISTS public."Customer_Order_Detail"
 (
     "Customer_Order_Detail_Id" bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
@@ -28,8 +31,4 @@ CREATE TABLE IF NOT EXISTS public."Customer_Order_Detail"
         REFERENCES public."Product_Variant_List" ("Product_Variant_List_Id") MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
+);

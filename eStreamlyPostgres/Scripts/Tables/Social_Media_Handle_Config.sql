@@ -1,4 +1,7 @@
-﻿
+﻿-- Table: public.Social_Media_Handle_Config
+
+-- DROP TABLE IF EXISTS public."Social_Media_Handle_Config";
+
 CREATE TABLE IF NOT EXISTS public."Social_Media_Handle_Config"
 (
     "Social_Media_Handle_Config_Id" bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
@@ -23,8 +26,4 @@ CREATE TABLE IF NOT EXISTS public."Social_Media_Handle_Config"
         REFERENCES public."RTMP_Server_Config" ("RTMP_Server_Config_Id") MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
+);

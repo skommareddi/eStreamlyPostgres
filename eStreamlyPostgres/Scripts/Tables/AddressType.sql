@@ -8,11 +8,7 @@
     "Modified_By" character varying COLLATE pg_catalog."default",
     "Record_Version" numeric NOT NULL DEFAULT 1,
     CONSTRAINT pk_address_type PRIMARY KEY ("Address_Type_Id")
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
+);
 
 CREATE INDEX IF NOT EXISTS "PK_Address_Type"
     ON public."Address_Type" USING btree

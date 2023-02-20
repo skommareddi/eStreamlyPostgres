@@ -1,4 +1,7 @@
-﻿
+﻿-- Table: public.Product
+
+-- DROP TABLE IF EXISTS public."Product";
+
 CREATE TABLE IF NOT EXISTS public."Product"
 (
     "Product_Id" bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
@@ -30,16 +33,18 @@ CREATE TABLE IF NOT EXISTS public."Product"
         REFERENCES public."Product_Category" ("Product_Category_Id") MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
+);
+-- Index: Business_Status
+
+-- DROP INDEX IF EXISTS public."Business_Status";
 
 CREATE INDEX IF NOT EXISTS "Business_Status"
     ON public."Product" USING btree
     ("Business_Id" ASC NULLS LAST, "Status" COLLATE pg_catalog."default" ASC NULLS LAST)
     TABLESPACE pg_default;
+-- Index: PK_Product
+
+-- DROP INDEX IF EXISTS public."PK_Product";
 
 CREATE INDEX IF NOT EXISTS "PK_Product"
     ON public."Product" USING btree

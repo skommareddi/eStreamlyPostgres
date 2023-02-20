@@ -17,11 +17,7 @@ CREATE TABLE IF NOT EXISTS public."Amazon_Transcribe_Job"
     "Modified_By" character varying COLLATE pg_catalog."default",
     "Record_Version" numeric NOT NULL DEFAULT 1,
     CONSTRAINT pk_amazon_transcribe_job PRIMARY KEY ("Amazon_Transcribe_Job_Id")
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
+);
 
 CREATE INDEX IF NOT EXISTS "PK_Amazon_Transcribe_Job"
     ON public."Amazon_Transcribe_Job" USING btree

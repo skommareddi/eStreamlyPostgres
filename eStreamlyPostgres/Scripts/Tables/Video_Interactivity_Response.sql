@@ -1,4 +1,7 @@
-﻿
+﻿-- Table: public.Video_Interactivity_Response
+
+-- DROP TABLE IF EXISTS public."Video_Interactivity_Response";
+
 CREATE TABLE IF NOT EXISTS public."Video_Interactivity_Response"
 (
     "Video_Interactivity_Response_Id" bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
@@ -19,11 +22,10 @@ CREATE TABLE IF NOT EXISTS public."Video_Interactivity_Response"
         REFERENCES public."Video_Interactivity" ("Video_Interactivity_Id") MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
+);
+-- Index: PK_Video_Interactivity_Response
+
+-- DROP INDEX IF EXISTS public."PK_Video_Interactivity_Response";
 
 CREATE INDEX IF NOT EXISTS "PK_Video_Interactivity_Response"
     ON public."Video_Interactivity_Response" USING btree
