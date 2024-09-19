@@ -1,5 +1,7 @@
 ﻿CREATE OR REPLACE FUNCTION public.getviewcountconversionrateanalytics(
 	businessid bigint,
+	fromdate timestamp without time zone,
+	todate timestamp without time zone,
 	ref refcursor)
     RETURNS refcursor
     LANGUAGE 'plpgsql'
@@ -35,6 +37,8 @@ left join (select count(distinct "UserId") "OrderCount",coalesce(TRUNC(sum("Amou
 -- 			where "UserId" is null or "UserId" != ''
 			group by "Live_Unique_Id") co on ul."Media_Unique_Id" = co."Live_Unique_Id"
 where ci."Business_Id" = businessId	
+	   and (fromDate is not null and toDate is not null and (ul."Start_Date_Time" >= fromDate and ul."End_Date_Time" <= toDate))
+	   and ul."Is_Active" = 'Y'
 UNION 
 	     select v."Description" "EventDescription"  
 	  ,v."Title" "EventName"
@@ -62,7 +66,7 @@ left join (select count(distinct "UserId") "OrderCount",TRUNC(sum("Amount" / 100
 			group by "Live_Unique_Id") co on v."Video_Unique_Id" = co."Live_Unique_Id"
 where  v."Is_Active" = true
 and ci."Business_Id" = businessId
-	  ) s
+and (fromDate is not null and toDate is not null and v."Created_Date" >= fromDate and v."Created_Date" <= toDate)) s
 order by s."EventStartTime";
  RETURN ref;
 end;

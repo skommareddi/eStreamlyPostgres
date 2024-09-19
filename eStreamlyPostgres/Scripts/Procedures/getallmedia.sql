@@ -1,5 +1,4 @@
-﻿
-CREATE OR REPLACE FUNCTION public.getallmedia(
+﻿CREATE OR REPLACE FUNCTION public.getallmedia(
 	pagenumber integer,
 	pagesize integer,
 	ref refcursor)
@@ -19,7 +18,7 @@ CREATE TEMP TABLE list AS
 						,m."Media_Item_Id"
 						,m."User_Id" 
 						,m."Media_Url" Media_Url 
-						,COALESCE(m."Uploaded_Event_Thumbnail_Image_Url",m."Media_thumbnail_Url") Media_thumbnailUrl
+						,COALESCE(m."Uploaded_Event_Thumbnail_Image_Url",ul."Event_Image",m."Media_thumbnail_Url") Media_thumbnailUrl
 						,m."Media_thumbnailGif_Url" Media_thumbnailGifUrl
 						,m."CreatedDate"
 						,DENSE_RANK() over(partition by b."Business_Id" order by  m."CreatedDate" desc) rn
@@ -53,7 +52,7 @@ CREATE TEMP TABLE list AS
 				left join public."AspNetUsers" u on m."User_Id" = u."Id"
 				left join public."Upcoming_Live_Stream" ul on m."Media_Unique_Id" = ul."Media_Unique_Id"
 				where (ul."Is_Private_Event" = false or ul."Is_Private_Event" is null)
-				and (ul."Upcoming_Live_Stream_Id" is null or (ul."Upcoming_Live_Stream_Id" is not null and (ul."End_Date_Time" is null or ul."End_Date_Time" < NOW() or ls."Is_Stream_Ended" = true)))
+				and (ul."Upcoming_Live_Stream_Id" is null or (ul."Upcoming_Live_Stream_Id" is not null and (ul."End_Date_Time" is null or ul."End_Date_Time" < NOW())))
 				and (ul."Is_Active"  is null or ul."Is_Active" = 'Y')
 				and m."Is_Active" = true
 				and m."Is_Private_Event" = false;

@@ -1,5 +1,4 @@
-﻿
-CREATE OR REPLACE FUNCTION public.getrecordedeventbymerchant(
+﻿CREATE OR REPLACE FUNCTION public.getrecordedeventbymerchant(
 	shortname character varying,
 	pagenumber integer,
 	pagesize integer,

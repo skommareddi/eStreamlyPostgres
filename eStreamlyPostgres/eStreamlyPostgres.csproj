@@ -6,68 +6,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Scripts\Procedures\Script0010-GetActiveParticipantsByUniqueId.sql" />
-    <None Remove="Scripts\Procedures\Script0011-GetAllEngagementData.sql" />
-    <None Remove="Scripts\Procedures\Script0012-GetAllMedia.sql" />
-    <None Remove="Scripts\Procedures\Script0013-getAllOrders.sql" />
-    <None Remove="Scripts\Procedures\Script0014-GetAllProducts.sql" />
-    <None Remove="Scripts\Procedures\Script0015-GetAllVideoDetail.sql" />
-    <None Remove="Scripts\Procedures\Script0016-GetAllVideoDetailxml.sql" />
-    <None Remove="Scripts\Procedures\Script0017-GetAnalyticsDetails.sql" />
-    <None Remove="Scripts\Procedures\Script0018-GetEventandRecordedEventByMerchant.sql" />
-    <None Remove="Scripts\Procedures\Script0019-GetEventPollBuyInfo.sql" />
-    <None Remove="Scripts\Procedures\Script0020-GetEventPollInfo.sql" />
-    <None Remove="Scripts\Procedures\Script0021-GetFollowerListByStreamId.sql" />
-    <None Remove="Scripts\Procedures\Script0022-getlatestfollowersbybusiness.sql" />
-    <None Remove="Scripts\Procedures\Script0023-getlatestLivePollandViewDetails.sql" />
-    <None Remove="Scripts\Procedures\Script0024-GetMechantDetails.sql" />
-    <None Remove="Scripts\Procedures\Script0025-getnewleads.sql" />
-    <None Remove="Scripts\Procedures\Script0026-getpollresponses.sql" />
-    <None Remove="Scripts\Procedures\Script0027-GetPollResponsesByUniqueId.sql" />
-    <None Remove="Scripts\Procedures\Script0028-GetProductList.sql" />
-    <None Remove="Scripts\Procedures\Script0029-GetProductListById.sql" />
-    <None Remove="Scripts\Procedures\Script0030-GetProductListByUpcomingEvent.sql" />
-    <None Remove="Scripts\Procedures\Script0031-GetUpcomingEventBusiness.sql" />
-    <None Remove="Scripts\Procedures\Script0032-GetUpcomingEventProducts.sql" />
-    <None Remove="Scripts\Procedures\Script0033-GetUpcomingEvents.sql" />
-    <None Remove="Scripts\Procedures\Script0034-GetUserChannel.sql" />
-    <None Remove="Scripts\Procedures\Script0035-GetVideoInteractivity.sql" />
-    <None Remove="Scripts\Procedures\Script0036-latestlikehistory.sql" />
-    <None Remove="Scripts\Procedures\Script0037-SitemapXML.sql" />
+    <None Remove="Scripts\Procedures\fn_get_on_live_post_live_data.sql" />
+    <None Remove="Scripts\Procedures\geteventandrecordedeventbymerchant.sql" />
     <None Remove="Scripts\Script0001 - User Table.sql" />
     <None Remove="Scripts\Views\GetAllMediaDetail.sql" />
     <None Remove="Scripts\Views\GetAllUpcomingEvent.sql" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Scripts\Procedures\Script0010-GetActiveParticipantsByUniqueId.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0011-GetAllEngagementData.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0012-GetAllMedia.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0013-getAllOrders.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0014-GetAllProducts.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0015-GetAllVideoDetail.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0016-GetAllVideoDetailxml.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0017-GetAnalyticsDetails.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0018-GetEventandRecordedEventByMerchant.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0019-GetEventPollBuyInfo.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0020-GetEventPollInfo.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0021-GetFollowerListByStreamId.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0022-getlatestfollowersbybusiness.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0023-getlatestLivePollandViewDetails.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0024-GetMechantDetails.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0025-getnewleads.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0026-getpollresponses.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0027-GetPollResponsesByUniqueId.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0028-GetProductList.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0029-GetProductListById.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0030-GetProductListByUpcomingEvent.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0031-GetUpcomingEventBusiness.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0032-GetUpcomingEventProducts.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0033-GetUpcomingEvents.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0034-GetUserChannel.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0035-GetVideoInteractivity.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0036-latestlikehistory.sql" />
-    <EmbeddedResource Include="Scripts\Procedures\Script0037-SitemapXML.sql" />
+    <Compile Include="Scripts\Procedures\fn_get_on_live_post_live_data.sql" />
+    <Compile Include="Scripts\Procedures\geteventandrecordedeventbymerchant.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Include="Scripts\Views\GetAllMediaDetail.sql" />
     <EmbeddedResource Include="Scripts\Views\GetAllUpcomingEvent.sql" />
   </ItemGroup>

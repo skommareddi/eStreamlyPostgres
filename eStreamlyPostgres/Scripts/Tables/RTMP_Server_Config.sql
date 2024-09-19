@@ -17,21 +17,21 @@ CREATE TABLE IF NOT EXISTS public."RTMP_Server_Config"
     "Stream_Key" character varying COLLATE pg_catalog."default",
     "Stream_Url" character varying COLLATE pg_catalog."default",
     "Is_App_Live" character varying COLLATE pg_catalog."default",
-    "Tiktok_Stream_Url" character varying COLLATE pg_catalog."default",
-    "Titktok_Stream_Key" character varying COLLATE pg_catalog."default",
-    "Is_Tiktok_Active" boolean,
     "Restream_Stream_Url" character varying COLLATE pg_catalog."default",
     "Restream_Stream_Key" character varying COLLATE pg_catalog."default",
     "Is_Restream_Active" boolean,
+    "Tiktok_Stream_Url" character varying COLLATE pg_catalog."default",
+    "Titktok_Stream_Key" character varying COLLATE pg_catalog."default",
+    "Is_Tiktok_Active" boolean,
+    "Custom_Rtmp_Url" character varying COLLATE pg_catalog."default",
+    "Custom_Rtmp_Stream_Key" character varying COLLATE pg_catalog."default",
+    "Is_Custom_Rtmp_Active" boolean DEFAULT false,
     CONSTRAINT pk_rtmp_server_config PRIMARY KEY ("RTMP_Server_Config_Id"),
     CONSTRAINT fk_rtmp_server_config_business FOREIGN KEY ("Business_Id")
         REFERENCES public."Business" ("Business_Id") MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
-);
--- Index: PK_RTMP_Server_Config
-
--- DROP INDEX IF EXISTS public."PK_RTMP_Server_Config";
+)
 
 CREATE INDEX IF NOT EXISTS "PK_RTMP_Server_Config"
     ON public."RTMP_Server_Config" USING btree

@@ -1,5 +1,4 @@
-﻿
-CREATE OR REPLACE FUNCTION public.getupcomingeventbusiness(
+﻿CREATE OR REPLACE FUNCTION public.getupcomingeventbusiness(
 	)
     RETURNS TABLE(businessname character varying, businessimage character varying, shortname character varying, backgroundimage character varying, followerscount bigint, businessid bigint) 
     LANGUAGE 'plpgsql'
@@ -8,7 +7,6 @@ CREATE OR REPLACE FUNCTION public.getupcomingeventbusiness(
     ROWS 1000
 
 AS $BODY$
-
 	DECLARE 
     BEGIN	
 	CREATE TEMP TABLE upcomingEvents
@@ -58,4 +56,3 @@ AS $BODY$
 	 drop table upcomingEvents;
 END;
 $BODY$;
-

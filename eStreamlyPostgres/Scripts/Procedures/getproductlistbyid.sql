@@ -1,5 +1,4 @@
-﻿
-CREATE OR REPLACE FUNCTION public.getproductlistbyid(
+﻿CREATE OR REPLACE FUNCTION public.getproductlistbyid(
 	productid bigint,
 	ref1 refcursor,
 	ref2 refcursor,
@@ -17,7 +16,6 @@ CREATE OR REPLACE FUNCTION public.getproductlistbyid(
     ROWS 1000
 
 AS $BODY$
-
 DECLARE businessId numeric :=(select p."Business_Id"
 from "Product" p
 where p."Product_Id" = productId);
@@ -174,12 +172,10 @@ select p."Product_Id" ProductId
       ,pd."Product_Shipping_Id" ProductShippingDetailId
 	  ,pd."Return_Detail" ReturnDetail
 	  ,pd."Shipping_Detail" ShippingDetail
-	  ,CASE WHEN pd."Max_Order_Amount" > 0 and pd."Shipping_Amount" > 0 THEN 'Free US standard shipping for orders valued at $'|| cast(pd."Max_Order_Amount" as varchar(50))||' or more </br> $' || cast(pd."Shipping_Amount" as varchar(50))||' Standard Flat Rate Shipping' 
-		WHEN pd."Max_Order_Amount" > 0 THEN 'Free US standard shipping for orders valued at $'|| cast(pd."Max_Order_Amount" as varchar(50))||' or more </br>' 
-		WHEN pd."Shipping_Amount" > 0 THEN '$' || cast(pd."Shipping_Amount" as varchar(50))||' Standard Flat Rate Shipping' 
-		WHEN pd.Max_Order_Amount = 0 and pd.Shipping_Amount = 0 THEN 'FREE Shipping on all orders'
-	  ELSE '' 
-	  END ShippingSummary
+	  ,CASE WHEN pd."Max_Order_Amount" > 0 and pd."Shipping_Amount" > 0 THEN 'Free shipping for orders over $' ||cast(pd."Max_Order_Amount" as varchar(50)) || ' USD,For Orders Under $'|| cast(pd."Max_Order_Amount" as varchar(50))||' USD, $' || cast(pd."Shipping_Amount" as varchar(50))||' Standard Flat Rate Shipping Fee Applies' 
+							  WHEN pd."Max_Order_Amount" > 0 THEN 'Free US standard shipping for orders valued at $'|| cast(pd."Max_Order_Amount" as varchar(50))||' or more </br>' 
+							  WHEN pd."Shipping_Amount" > 0 THEN '$' || cast(pd."Shipping_Amount" as varchar(50))||' Standard Flat Rate Shipping' 
+							ELSE '' END ShippingSummary
 from "Product" p
 join "Product_Shipping_Detail" pd on p."Business_Id" = pd."Business_Id"
 where p."Business_Id" = businessId
@@ -225,4 +221,3 @@ and (p."Product_Id" = productId) and p."Status" = 'active';
 	RETURN NEXT ref9;
 END;
 $BODY$;
-

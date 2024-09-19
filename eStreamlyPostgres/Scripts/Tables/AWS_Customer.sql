@@ -1,0 +1,15 @@
+﻿CREATE TABLE IF NOT EXISTS public."AWS_Customer"
+(
+    "AWS_Customer_Id" bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    "CustomerAWSAccountId" character varying COLLATE pg_catalog."default" NOT NULL,
+    "CustomerIdentifier" character varying COLLATE pg_catalog."default" NOT NULL,
+    "ProductCode" character varying COLLATE pg_catalog."default" NOT NULL,
+    "Is_Active" boolean DEFAULT true,
+    "Created_Date" timestamp with time zone NOT NULL,
+    "Created_By" character varying COLLATE pg_catalog."default" NOT NULL,
+    "Modified_Date" timestamp with time zone,
+    "Modified_By" character varying COLLATE pg_catalog."default",
+    "Record_Version" numeric NOT NULL DEFAULT 1,
+    "Business_Id" bigint,
+    CONSTRAINT "pk_AWS_Customer" PRIMARY KEY ("AWS_Customer_Id")
+);

@@ -1,5 +1,4 @@
-﻿
-CREATE OR REPLACE FUNCTION public.geteventandrecordedeventbymerchant(
+﻿CREATE OR REPLACE FUNCTION public.geteventandrecordedeventbymerchant(
 	shortname character varying,
 	pagenumber integer,
 	pagesize integer,
@@ -58,7 +57,7 @@ select ls."Channel_Info_Id"
 	  ,ul."Name" EventName
 from "Live_Stream_Info" ls
 left join "Upcoming_Live_Stream" ul on ls."Unique_Id" = ul."Media_Unique_Id"
-group by ls."Channel_Info_Id"
+group by "Channel_Info_Id"
 		,"Unique_Id" 
 		,ls."Created_Date"
 		,ul."Event_Image" 
@@ -287,4 +286,3 @@ CROSS JOIN (select ((select Count(*) TotalPost
 
 END;
 $BODY$;
-

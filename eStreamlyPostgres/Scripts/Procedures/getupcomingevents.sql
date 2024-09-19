@@ -1,5 +1,4 @@
-﻿
-CREATE OR REPLACE FUNCTION public.getupcomingevents(
+﻿CREATE OR REPLACE FUNCTION public.getupcomingevents(
 	liveuniqueid character varying,
 	refcursor1 refcursor,
 	refcursor2 refcursor,
@@ -56,10 +55,10 @@ select ul."Upcoming_Live_Stream_Id"
 		,b."Business_Id"
 		,ci."Channel_Info_Id"
 from "Upcoming_Live_Stream" ul
-join "Channel_Info" ci on ul."Channel_Id" = ci."Channel_Id"
+join "Channel_Info" ci on ul."Channel_Info_Id" = ci."Channel_Info_Id"
 join "Business" b on ci."Business_Id" = b."Business_Id"
 left join "AspNetUsers" u on ul."User_Id" = u."Id"
-where ul."Media_Unique_Id" = in_liveuniqueid;
+where ul."Media_Unique_Id" = liveUniqueId;
 
 		
 DROP TABLE IF EXISTS userChannel;
@@ -93,7 +92,7 @@ select distinct e."Upcoming_Live_Stream_Id" "Upcoming_Live_Stream_Id"
 		,e."Event_Video_Url" "EventVideoUrl"
 		,e."Event_Video_Gif_Url" "EventVideoGifUrl"
 from "Upcoming_Live_Stream" e
-join userChannel uc on e."Channel_Id" = uc."channelid"
+join userChannel uc on e."Channel_Info_Id" = uc."channelinfoid"
 left join "AspNetUsers" u on e."User_Id" = u."Id"
 left join "Live_Stream_Info" li on e."Media_Unique_Id" = COALESCE(li."Upcoming_Unique_Id",li."Unique_Id")
 where e."Media_Unique_Id" != in_liveuniqueid
@@ -139,6 +138,8 @@ where b."Is_Active" = 'Y'
 and (ul."Is_Private_Event" = false or ul."Is_Private_Event" is null)
 and (ul."Upcoming_Live_Stream_Id" is null or (ul."Upcoming_Live_Stream_Id" is not null and (ul."End_Date_Time" is null or ul."End_Date_Time" < NOW())))
 and COALESCE (ul."Is_Active",'Y') = 'Y'
+and m."Is_Active" = true
+and m."Is_Private_Event" = false
 order by m."CreatedDate" desc;
 RETURN NEXT refcursor2;
 
@@ -148,7 +149,7 @@ select d.*
       ,ROW_NUMBER() over(partition by d."Product_Id" order by d."Created_Date" desc) rn
 from public."Discount_Offer" d
 join upcomingevent bl on d."Business_Id" = bl."Business_Id"
-where DATE(NOW()) between DATE("Valid_Start_Date") and date("Valid_End_Date");
+where NOW() between "Valid_Start_Date" and "Valid_End_Date";
 
 OPEN refcursor3 FOR
 select BusinessId

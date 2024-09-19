@@ -1,5 +1,4 @@
-﻿
-CREATE OR REPLACE FUNCTION public.geteventpollinfo(
+﻿CREATE OR REPLACE FUNCTION public.geteventpollinfo(
 	uniqueid character varying,
 	refcursor1 refcursor,
 	refcursor2 refcursor)
@@ -10,7 +9,6 @@ CREATE OR REPLACE FUNCTION public.geteventpollinfo(
     ROWS 1000
 
 AS $BODY$
-
 DECLARE startDate timestamp;endDate timestamp;
 BEGIN
 DROP TABLE IF EXISTS PollResult;
@@ -25,7 +23,12 @@ CREATE temp table PollResult
 	PollUniqueId varchar(250) null,
 	PollType int null,
 	Information varchar null,
-	ShoutOutValue varchar null
+	ShoutOutValue varchar null,
+	PollDate timestamp,
+	AffiliateLinks varchar null,
+	Metadata varchar null,
+	CallToAction varchar null,
+	Subscribe varchar null
 );
 
 DROP TABLE IF EXISTS UpcomingPollResult;
@@ -40,7 +43,12 @@ CREATE TEMP TABLE UpcomingPollResult
 	Information varchar,
 	ShoutOutValue varchar,
 	Product_Id bigint null,
-	Is_Poll_Posted bit 
+	Is_Poll_Posted bit ,
+	PollDate timestamp,
+	AffiliateLinks varchar null,
+	Metadata varchar null,
+	CallToAction varchar null,
+	Subscribe varchar null
 );
 
 DROP TABLE IF EXISTS poll;
@@ -55,6 +63,7 @@ from (select pi."Poll_Info_Detail"
 			  ,pr."SelectedOption"
 			  ,DENSE_RANK() over (partition by (pi."Poll_Info_Detail" :: json->> 'Description') order by pi."Poll_Info_Id" asc ) rn
 			  ,pi."Poll_Type" "PollType"
+	  		  ,pi."Modified_Date" "PollDate"
 		from "Poll_Info" pi
 LEFT JOIN LATERAL (select  pr."Response_Info" :: json->'QuestionResponse'->>'SelectedOption' as "SelectedOption"
 				,pr."Poll_Info_Id" 
@@ -78,8 +87,8 @@ select pi."Question"
 	   ,pi."Poll_Info_Id"
 from pollques1 pi
 LEFT   JOIN LATERAL json_array_elements_text(pi."Options" :: json) with ordinality c on true
-group by pi."Question",c.value,pi."Poll_Info_Id"
-order by pi."Question",c.value;
+-- group by pi."Question",c.value
+order by c.ordinality,pi."Question";
 
 DROP TABLE IF EXISTS pollquesResult;
 CREATE TEMP TABLE pollquesResult AS
@@ -89,14 +98,12 @@ select pq.*
 from pollques pq 
 left join (select "Question"
 				 ,"SelectedOption"
-		   	     ,p."Poll_Info_Id"
 				 ,Count(*) "RespondCount"
 			from poll p
 			where "Question" is not null
 			group by "Question"
 					,"SelectedOption"
-		   			,p."Poll_Info_Id"
-			) p on pq."Poll_Info_Id" = p."Poll_Info_Id" and pq."Question" = p."Question" and pq."Options" = p."SelectedOption";
+			) p on pq."Question" = p."Question" and pq."Options" = p."SelectedOption";
 
 INSERT INTO PollResult(Question
 					   ,Options
@@ -105,7 +112,8 @@ INSERT INTO PollResult(Question
 					   ,PollInfoId
 					  ,ChannelId
 					  ,PollUniqueId
-					  ,PollType)
+					  ,PollType
+					  ,PollDate)
 select  pr."Question"
 	   ,pr."Options"
 	   ,pr."SelectedOption"
@@ -114,8 +122,9 @@ select  pr."Question"
 	   ,p."ChannelId"
 	   ,p."PollUniqueId"
 	   ,p."PollType"
+	   ,p."PollDate"
 from pollquesResult pr
-join poll p on pr."Poll_Info_Id" = p."Poll_Info_Id" and pr."Question" = p."Question";
+join poll p on pr."Question" = p."Question" and pr."Poll_Info_Id" =  p."Poll_Info_Id";
 
 -- update PollResult  set PollInfoId = p."Poll_Info_Id"
 -- 					 ,ChannelId = p."ChannelId"
@@ -158,6 +167,55 @@ order by pi."Poll_Info_Id";
 INSERT INTO PollResult(ChannelId,PollInfoId,PollType,PollUniqueId,ShoutOutValue)
 select "ChannelId","PollInfoId","PollType","PollUniqueId","ShoutOutValue" from PollShoutResult;
 
+DROP TABLE IF EXISTS PollAffiliateLinkResult;
+CREATE TEMP TABLE PollAffiliateLinkResult AS
+select pi."Poll_Info_Detail"
+	  ,pi."Poll_Info_Id" "PollInfoId"
+	    ,pi."Poll_Info_Detail" :: json->> 'AffiliateLinks' as "AffiliateLinks"
+	  		  ,pi."Poll_Info_Detail" :: json->> 'ChannelId' as "ChannelId"
+	          ,pi."Poll_Info_Detail" :: json->> 'PollUniqueId' as "PollUniqueId"
+	  ,pi."Poll_Type" "PollType"
+	  ,pi."Metadata" as "Metadata"
+from "Poll_Info" pi
+where "Unique_Id" = uniqueId
+and pi."Poll_Type" = 6
+order by pi."Poll_Info_Id";
+
+INSERT INTO PollResult(ChannelId,PollInfoId,PollType,PollUniqueId,AffiliateLinks,Metadata)
+select "ChannelId","PollInfoId","PollType","PollUniqueId","AffiliateLinks","Metadata" from PollAffiliateLinkResult;
+
+DROP TABLE IF EXISTS PollCalltoActionResult;
+CREATE TEMP TABLE PollCalltoActionResult AS
+select pi."Poll_Info_Detail"
+	  ,pi."Poll_Info_Id" "PollInfoId"
+	  ,pi."Poll_Info_Detail" :: json->> 'ChannelId' as "ChannelId"
+	  ,pi."Poll_Info_Detail" :: json->> 'PollUniqueId' as "PollUniqueId"
+	  ,pi."Poll_Type" "PollType"
+	  ,pi."CallToAction" as "CallToAction"
+from "Poll_Info" pi
+where "Unique_Id" = uniqueId
+and pi."Poll_Type" = 7
+order by pi."Poll_Info_Id";
+
+INSERT INTO PollResult(ChannelId,PollInfoId,PollType,PollUniqueId,CallToAction)
+select "ChannelId","PollInfoId","PollType","PollUniqueId","CallToAction" from PollCalltoActionResult;
+
+DROP TABLE IF EXISTS PollSubscribeResult;
+CREATE TEMP TABLE PollSubscribeResult AS
+select pi."Poll_Info_Detail"
+	  ,pi."Poll_Info_Id" "PollInfoId"
+	  ,pi."Poll_Info_Detail" :: json->> 'ChannelId' as "ChannelId"
+	  ,pi."Poll_Info_Detail" :: json->> 'PollUniqueId' as "PollUniqueId"
+	  ,pi."Poll_Type" "PollType"
+	  ,pi."CallToAction" as "Subscribe"
+from "Poll_Info" pi
+where "Unique_Id" = uniqueId
+and pi."Poll_Type" = 8
+order by pi."Poll_Info_Id";
+
+INSERT INTO PollResult(ChannelId,PollInfoId,PollType,PollUniqueId,Subscribe)
+select "ChannelId","PollInfoId","PollType","PollUniqueId","Subscribe" from PollSubscribeResult;
+
 DROP TABLE IF EXISTS upcomingpoll1;
 CREATE TEMP TABLE upcomingpoll1 AS
 select * 
@@ -171,6 +229,7 @@ from (select pi."Poll_Info_Detail"
 			  ,pi."Upcoming_Unique_Id"
 			  ,pi."Product_Id"
 			  ,CASE WHEN  "Is_Poll_Posted"  THEN 1 ELSE 0 END  :: bit "Is_Poll_Posted"
+	  		  ,pi."Modified_Date" "PollDate"
 		from "Upcoming_Poll_Info" pi
 where "Upcoming_Unique_Id" = uniqueId 
 	and pi."Poll_Type" = 1 
@@ -185,7 +244,7 @@ select pi.*
 from upcomingpoll1 pi
 cross join json_array_elements_text(pi."Options1" :: json) with ordinality c
 -- group by pi."Question",c.value,c.ordinality
-order by pi."Question",c.value,c.ordinality;
+order by pi."Question";
 
 INSERT INTO UpcomingPollResult (
 						Question
@@ -195,7 +254,8 @@ INSERT INTO UpcomingPollResult (
 					   ,PollUniqueId
 					   ,ChannelId
 					   ,Product_Id
-					   ,Is_Poll_Posted)
+					   ,Is_Poll_Posted
+					   ,PollDate)
 select  "Question"
 	   ,"Options"
 	   ,"Upcoming_Poll_Info_Id"
@@ -204,6 +264,7 @@ select  "Question"
 		,"ChannelId"
 		,"Product_Id"
 		,"Is_Poll_Posted"
+		,"PollDate"
 from upcomingpoll;
 
 DROP TABLE IF EXISTS UpcomingInfo;
@@ -245,9 +306,67 @@ order by pi."Upcoming_Poll_Info_Id";
 INSERT INTO UpcomingPollResult(ChannelId,PollInfoId,PollType,PollUniqueId,ShoutOutValue,Is_Poll_Posted)
 select "ChannelId","PollInfoId","PollType","Upcoming_Unique_Id","ShoutOutValue","Is_Poll_Posted" from UpcomingShoutout;
 
+DROP TABLE IF EXISTS UpcomingAffiliateLink;
+CREATE TEMP TABLE UpcomingAffiliateLink AS
+select pi."Poll_Info_Detail"
+	  ,pi."Upcoming_Poll_Info_Id" "PollInfoId"
+	   ,pi."Poll_Info_Detail" :: json->> 'AffiliateLinks' as "AffiliateLinks"
+	  		  ,pi."Poll_Info_Detail" :: json->> 'ChannelId' as "ChannelId"
+	          ,pi."Poll_Info_Detail" :: json->> 'PollUniqueId' as "PollUniqueId"
+	  ,pi."Poll_Type" "PollType"
+	  ,pi."Upcoming_Unique_Id"
+	 ,CASE WHEN  "Is_Poll_Posted"  THEN 1 ELSE 0 END  :: bit "Is_Poll_Posted"
+	 ,pi."Metadata" as "Metadata"
+-- INTO UpcomingShoutout
+from "Upcoming_Poll_Info" pi
+where "Upcoming_Unique_Id" = uniqueId
+	and pi."Poll_Type" = 6
+	and "Is_Poll_Posted" = false
+order by pi."Upcoming_Poll_Info_Id";
+
+INSERT INTO UpcomingPollResult(ChannelId,PollInfoId,PollType,PollUniqueId,AffiliateLinks,Is_Poll_Posted,Metadata)
+select "ChannelId","PollInfoId","PollType","Upcoming_Unique_Id","AffiliateLinks","Is_Poll_Posted","Metadata" from UpcomingAffiliateLink;
+
+DROP TABLE IF EXISTS UpcomingCalltoAction;
+CREATE TEMP TABLE UpcomingCalltoAction AS
+select pi."Poll_Info_Detail"
+	  ,pi."Upcoming_Poll_Info_Id" "PollInfoId"
+	  ,pi."Poll_Info_Detail" :: json->> 'ChannelId' as "ChannelId"
+	  ,pi."Poll_Info_Detail" :: json->> 'PollUniqueId' as "PollUniqueId"
+	  ,pi."Poll_Type" "PollType"
+	  ,pi."Upcoming_Unique_Id"
+	 ,CASE WHEN  "Is_Poll_Posted"  THEN 1 ELSE 0 END  :: bit "Is_Poll_Posted"
+	 ,pi."CallToAction" as "CallToAction"
+from "Upcoming_Poll_Info" pi
+where "Upcoming_Unique_Id" = uniqueId
+	and pi."Poll_Type" = 7
+	and "Is_Poll_Posted" = false
+order by pi."Upcoming_Poll_Info_Id";
+
+INSERT INTO UpcomingPollResult(ChannelId,PollInfoId,PollType,PollUniqueId,CallToAction,Is_Poll_Posted)
+select "ChannelId","PollInfoId","PollType","Upcoming_Unique_Id","CallToAction","Is_Poll_Posted" from UpcomingCalltoAction;
+
+DROP TABLE IF EXISTS UpcomingSubscribe;
+CREATE TEMP TABLE UpcomingSubscribe AS
+select pi."Poll_Info_Detail"
+	  ,pi."Upcoming_Poll_Info_Id" "PollInfoId"
+	  ,pi."Poll_Info_Detail" :: json->> 'ChannelId' as "ChannelId"
+	  ,pi."Poll_Info_Detail" :: json->> 'PollUniqueId' as "PollUniqueId"
+	  ,pi."Poll_Type" "PollType"
+	  ,pi."Upcoming_Unique_Id"
+	 ,CASE WHEN  "Is_Poll_Posted"  THEN 1 ELSE 0 END  :: bit "Is_Poll_Posted"
+	 ,pi."Subscribe" as "Subscribe"
+from "Upcoming_Poll_Info" pi
+where "Upcoming_Unique_Id" = uniqueId
+	and pi."Poll_Type" = 8
+	and "Is_Poll_Posted" = false
+order by pi."Upcoming_Poll_Info_Id";
+
+INSERT INTO UpcomingPollResult(ChannelId,PollInfoId,PollType,PollUniqueId,Subscribe,Is_Poll_Posted)
+select "ChannelId","PollInfoId","PollType","Upcoming_Unique_Id","Subscribe","Is_Poll_Posted" from UpcomingSubscribe;
+
 OPEN refcursor1 FOR
-select distinct * from PollResult
-order by pollinfoid;
+select distinct * from PollResult;
 RETURN NEXT refcursor1 ; 
 
 OPEN refcursor2 FOR

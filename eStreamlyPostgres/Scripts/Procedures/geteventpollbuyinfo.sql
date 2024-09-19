@@ -1,5 +1,4 @@
-﻿
-CREATE OR REPLACE FUNCTION public.geteventpollbuyinfo(
+﻿CREATE OR REPLACE FUNCTION public.geteventpollbuyinfo(
 	uniqueid character varying,
 	refcursor1 refcursor)
     RETURNS SETOF refcursor 
@@ -64,7 +63,8 @@ where "Valid_End_Date" >= startDate and "Valid_Start_Date" <= endDate;
 			,c."Discount_Percentage" "DiscountPercentage"
 			,c."Product_Id" "CouponProduct"
 			,c."Valid_Start_Date" "ValidStartDate" 
-			,c."Valid_End_Date" "ValidEndDate" 			
+			,c."Valid_End_Date" "ValidEndDate" 	
+			,poll."PollDate"
 	from (select poll.*
 			,ROW_NUMBER() OVER (PARTITION BY poll."ProductId" ORDER BY poll."Poll_Info_Id" DESC) "rno"
 		from (select distinct  pi."Poll_Info_Detail" :: json->> 'ChannelId' as "ChannelId"
@@ -77,6 +77,7 @@ where "Valid_End_Date" >= startDate and "Valid_Start_Date" <= endDate;
 							,true "IsPollPosted"
 							,pi."Poll_Info_Id" "Poll_Info_Id"
 							, 0 "Upcoming_Poll_Info_Id"
+			  				, pi."Modified_Date" "PollDate"
 			from "Poll_Info" pi 
 			  left join "Product_Variant_List" pv on pi."Product_Variant_List_Id" = pv."Product_Variant_List_Id"
 	where pi."Unique_Id" = uniqueId
@@ -92,6 +93,7 @@ where "Valid_End_Date" >= startDate and "Valid_Start_Date" <= endDate;
 					,pi."Is_Poll_Posted" "IsPollPosted"
 					,0 "Poll_Info_Id"
 					,pi."Upcoming_Poll_Info_Id"
+			  		, pi."Modified_Date" "PollDate"
 	from "Upcoming_Poll_Info" pi 
 			  left join "Product_Variant_List" pv on pi."Product_Variant_List_Id" = pv."Product_Variant_List_Id"
 	where pi."Upcoming_Unique_Id" = uniqueId
@@ -108,3 +110,4 @@ where "Valid_End_Date" >= startDate and "Valid_Start_Date" <= endDate;
 
 END;
 $BODY$;
+

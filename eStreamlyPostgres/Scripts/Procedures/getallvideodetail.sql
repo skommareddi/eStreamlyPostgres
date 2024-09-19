@@ -1,5 +1,4 @@
-﻿
-CREATE OR REPLACE FUNCTION public.getallvideodetail(
+﻿CREATE OR REPLACE FUNCTION public.getallvideodetail(
 	ref refcursor)
     RETURNS refcursor
     LANGUAGE 'plpgsql'
@@ -10,7 +9,7 @@ AS $BODY$
 BEGIN
 	OPEN ref FOR
 select ' <url> 
-<loc>https://streamifyclient.azurewebsites.net/' || b."Shortname" || '/' || m."Modified_Title" || ' </loc>
+<loc>https://estreamly.com/' || b."Shortname" || '/' || m."Modified_Title" || ' </loc>
 <video:video>
 <video:thumbnail_loc>"' || "Media_thumbnail_Url" || '"</video:thumbnail_loc>
       <video:title>' || 

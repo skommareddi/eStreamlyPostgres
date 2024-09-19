@@ -1,5 +1,4 @@
-﻿
-CREATE OR REPLACE FUNCTION public.getupcomingeventproducts(
+﻿CREATE OR REPLACE FUNCTION public.getupcomingeventproducts(
 	)
     RETURNS TABLE(businessid bigint, productdescription character varying, productname character varying, productid bigint, productimage character varying, businessimage character varying, businessbackgroundimage character varying, businessname character varying, businessshortname character varying, productvariantlistid bigint, productvariantkey character varying, productvariantvalue character varying, productvariantvalue1 character varying, price numeric, rn bigint, createddate timestamp with time zone, discountedprice numeric, isdiscountavailable integer, discountpercentage numeric, desktopimageurl character varying, tabletimageurl character varying, mobileimageurl character varying, productsortdate timestamp with time zone) 
     LANGUAGE 'plpgsql'
@@ -8,7 +7,6 @@ CREATE OR REPLACE FUNCTION public.getupcomingeventproducts(
     ROWS 1000
 
 AS $BODY$
-
 	DECLARE 
      BEGIN
     
@@ -66,7 +64,8 @@ left join discountOffer dof on b."Business_Id" = dof."Business_Id"
 						and (dof."Product_Id" is null or dof."Product_Id" = p."Product_Id")
 where b."Is_Active" = 'Y'
 and pvl."Status" = 'active'
-and pvl."Position" = 1) pl
+and pvl."Position" = 1
+and b."Shortname" != 'cbdunlimited') pl
 where pl.rn = 1
 order by ProductSortDate desc;
 

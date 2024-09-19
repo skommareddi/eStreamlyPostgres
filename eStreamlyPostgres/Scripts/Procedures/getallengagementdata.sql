@@ -1,12 +1,10 @@
-﻿
-CREATE OR REPLACE FUNCTION public.getallengagementdata(
+﻿CREATE OR REPLACE FUNCTION public.getallengagementdata(
 	ref refcursor)
     RETURNS refcursor
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
 AS $BODY$
-
 BEGIN
 	OPEN ref FOR SELECT u."FullName"
 				   ,u."Email"
@@ -23,4 +21,3 @@ BEGIN
 	RETURN ref;
 END;
 $BODY$;
-

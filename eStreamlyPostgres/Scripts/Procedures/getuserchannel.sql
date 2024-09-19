@@ -1,9 +1,8 @@
-﻿
-CREATE OR REPLACE FUNCTION public.getuserchannel(
+﻿CREATE OR REPLACE FUNCTION public.getuserchannel(
 	channelid1 character varying,
 	channelinfoid1 bigint,
 	businessid1 bigint)
-    RETURNS TABLE(channelinfoid bigint, channelid character varying, userid character varying, businessid bigint, channeldesc character varying, channelname character varying, imageurl character varying, thumbnailimageurl character varying, businessname character varying, businessimage character varying, backgroundimage character varying, liveuniqueid character varying, eventname character varying, eventdesc character varying, eventimage character varying, shortname character varying, businessdescription character varying, businessurl character varying, iscbdproduct boolean) 
+    RETURNS TABLE(channelinfoid bigint, channelid character varying, userid character varying, businessid bigint, channeldesc character varying, channelname character varying, imageurl character varying, thumbnailimageurl character varying, businessname character varying, businessimage character varying, backgroundimage character varying, liveuniqueid character varying, eventname character varying, eventdesc character varying, eventimage character varying, shortname character varying, businessdescription character varying, businessurl character varying, iscbdproduct boolean, playbackurl character varying, currency character varying, shippingcountries character varying, domainurl character varying, ecommerceplatform character varying) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -71,10 +70,15 @@ select  ci."Channel_Id",
 		ls.DesktopImageUrl,
 		b."Business_Description" BusinessDescription,
 		b."Business_Url" BusinessUrl,
-	b."Is_Cbd_Product" "IsCBDProduct" 
+	b."Is_Cbd_Product" "IsCBDProduct" ,
+	ci."PlaybackUrl",
+	b."Currency" "Currency",
+	b."Shipping_Countries" "Shipping_Countries",
+	b."Domain_Url" "Domain_Url",
+	b."Order_Management_Sytem" "Order_Management_System"
 --INTO #userChannel
 from "Channel_Info" ci
-join "Business" b on ci."Business_Id" = b."Business_Id"
+join "Business" b on ci."Business_Id" = b."Business_Id" and b."Is_Active" = 'Y'
 left join "User_Channel" uc on ci."Channel_Info_Id" = uc."Channel_Info_Id"
 left join "AspNetUserRoles" ur on uc."UserId" = ur."UserId"
 left join "AspNetRoles" r on ur."RoleId" = r."Id"
@@ -102,7 +106,12 @@ select u."Channel_Info_Id" "ChannelInfoId",
 		u."Shortname",
 		u.BusinessDescription "BusinessDescription",
 		u.BusinessUrl "BusinessUrl",
-		u."IsCBDProduct" IsCBDProduct
+		u."IsCBDProduct" IsCBDProduct,
+		u."PlaybackUrl",
+		u."Currency" "Currency",
+		u."Shipping_Countries" "ShippingCountries",
+		u."Domain_Url" "domainurl",
+		u."Order_Management_System" "ecommerceplatform"
 from userChannel u
 where rn = 1 
 and (u."Channel_Id" = channelid1 or channelid1 is null)
@@ -128,9 +137,13 @@ group by  "Channel_Id",
 		u."Shortname",
 		u.BusinessDescription,
 		u.BusinessUrl,
-		u."IsCBDProduct"
+		u."IsCBDProduct",
+		u."PlaybackUrl",
+		u."Currency",
+		u."Shipping_Countries",
+		u."Domain_Url",
+		u."Order_Management_System"
 order by "Channel_Id",RoleNo;
 
 END; 
 $BODY$;
-

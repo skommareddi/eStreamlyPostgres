@@ -1,5 +1,4 @@
-﻿
-CREATE OR REPLACE FUNCTION public.getproductlistbyupcomingevent(
+﻿CREATE OR REPLACE FUNCTION public.getproductlistbyupcomingevent(
 	upcominguniqueid character varying,
 	businessid numeric,
 	refcursor1 refcursor,
@@ -7,7 +6,8 @@ CREATE OR REPLACE FUNCTION public.getproductlistbyupcomingevent(
 	refcursor3 refcursor,
 	refcursor4 refcursor,
 	refcursor5 refcursor,
-	refcursor6 refcursor)
+	refcursor6 refcursor,
+	refcursor7 refcursor)
     RETURNS SETOF refcursor 
     LANGUAGE 'plpgsql'
     COST 100
@@ -16,7 +16,6 @@ CREATE OR REPLACE FUNCTION public.getproductlistbyupcomingevent(
 
 AS $BODY$
 
-	
 	DECLARE startDate timestamp;endDate timestamp;
 	Declare shortname varchar(500);
 	DECLARE shippingDetail varchar;
@@ -109,7 +108,15 @@ DiscountPercentage numeric null,
 ProductCategory varchar(250),
 IsCouponAvailable bit,
 ECommercePlatform varchar(250),
-VariantName varchar(250)
+VariantName varchar(250),
+StripeConnectAccountId varchar(250),
+IsInventoryTrackingAvailable boolean,
+InventoryTracking varchar(250),
+InventoryStockLevel numeric null,
+InventoryLowStockLevel numeric null,
+IsOutofStock boolean,
+ExternalProductId bigint null,	
+ProductVariantId bigint null
 );
 
 with discountOffer as (
@@ -128,7 +135,7 @@ and ( NOW() between "Valid_Start_Date" and "Valid_End_Date")
 
 INSERT into list
 select bp."Business_Id" "BusinessId"
-	    ,p."Product_Description" "ProductDescription"
+	    ,COALESCE(p."Short_Description",p."Product_Description") "ProductDescription"
 	    ,p."Product_Name" "ProductName" 
 	    ,p."Product_Id" "ProductId"
 	    ,p."productvid" "ProductVideoId"
@@ -141,16 +148,37 @@ select bp."Business_Id" "BusinessId"
 	    ,pvl."Title" "ProductVariantKey"
 		,'' "ProductVariantValue"
 		,pv1."Product_Variant_List" "ProductVariantValue1"
-		,pvl."Price"
+		,case when pvl."CompareAtPrice"  is not null and pvl."CompareAtPrice" > 0 then pvl."CompareAtPrice" else pvl."Price"  End "Price"
 		,ROW_NUMBER() OVER (PARTITION BY p."Product_Id",pvl."Product_Variant_List_Id" ORDER BY pi."Created_Date",up.Created_Date desc ) AS "rn"	   
 		,up.Created_Date "CreatedDate"
-		,COALESCE(cast (pvl."Price"  - (pvl."Price"  * d."Discount_Percentage" / 100) as decimal(10,2)),pvl."Price") "DiscountedPrice"
-		,CASE WHEN d."Discount_Percentage" > 0 THEN 1 ELSE 0 END :: bit "IsDiscountAvailable"	
+		,case when pvl."CompareAtPrice"  is not null and pvl."CompareAtPrice" > 0 and  pvl."CompareAtPrice" != pvl."Price" and  (d."Discount_Percentage" is null or  d."Discount_Percentage" = 0 ) then pvl."Price" else COALESCE(cast (pvl."Price"  - (pvl."Price"  * d."Discount_Percentage" / 100) as decimal(10,2)),pvl."Price") end "DiscountedPrice"
+		,CASE WHEN ( pvl."CompareAtPrice"  is not null and pvl."CompareAtPrice" > 0 and  pvl."CompareAtPrice" != pvl."Price" ) or  d."Discount_Percentage" > 0 THEN 1 ELSE 0 END :: bit "IsDiscountAvailable"	
 		,d."Discount_Percentage" "DiscountPercentage"
 		,pc."Name" "ProductCategory"
 		,CASE WHEN c."Discount_Percentage" > 0 THEN 1 ELSE 0 END :: bit "IsCouponAvailable"
-		,b."Order_Management_Sytem" "ECommercePlatform"
+		,CASE when LOWER(b."Order_Management_Sytem") = 'shopify' and bc."Config_Value" = 'Y' then 'shopify'
+	   		 when LOWER(b."Order_Management_Sytem") = 'shopify' then null
+	   		 else LOWER(b."Order_Management_Sytem") END "ECommercePlatform"
 		,pvl."Title" "VariantName"
+		,b."Stripe_Connect_Account_Id" "StripeConnectAccountId"
+		,p."Is_Inventory_Tracking_Available" "IsInventoryTrackingAvailable"
+        ,p."Inventory_Tracking" "InventoryTracking"
+        ,CASE WHEN p."Inventory_Tracking" = 'product' THEN p."Inventory_Stock_Level"
+        WHEN p."Inventory_Tracking" = 'variant' THEN pvl."Inventory_Stock_Level"
+        ELSE 0
+        END "InventoryStockLevel"
+       , CASE WHEN p."Inventory_Tracking" = 'product' THEN p."Inventory_Low_Stock_Level"
+        WHEN p."Inventory_Tracking" = 'variant' THEN pvl."Inventory_Low_Stock_Level"
+        ELSE 0
+        END "InventoryLowStockLevel"
+        ,CASE WHEN p."Is_Inventory_Tracking_Available" = true  
+        and ((p."Inventory_Tracking" = 'product' and p."Inventory_Stock_Level" = 0 )
+        or (p."Inventory_Tracking" = 'variant' and pvl."Inventory_Stock_Level" = 0 ))
+        THEN true
+        ELSE false
+        END "IsOutofStock"
+		,COALESCE(p."Shopify_Product_Id",bpr."BigCommerce_Product_Id") "ExternalProductId"
+		,COALESCE(pvl."Shopify_Product_Variants_Id",bpv."BigCommerce_Product_Variant_Id") "ProductVariantId"
 from "Product" p 
 join "Business_Product" bp on p."Product_Id" = bp."Product_id"
 join "Business" b on bp."Business_Id" = b."Business_Id"
@@ -164,6 +192,9 @@ left join discountOffer d on b."Business_Id" = d."Business_Id"
 left join coupon c on b."Business_Id" = c."Business_Id" 
 						and (c."Product_Id" is null or c."Product_Id" = p."Product_Id")
 left join "Product_Category" pc on p."Product_Category_Id" = pc."Product_Category_Id"
+left join "Business_Config" bc on b."Business_Id" = bc."Business_Id" and bc."Config_Name" = 'Can Use Shopify Checkout'
+left join "BigCommerce_Product" bpr on p."BigCommerce_Product_Id" = bpr."Product_Id"
+left join "BigCommerce_Product_Variant" bpv on pvl."BigCommerce_Product_Variant_Id" = bpv."Product_Variant_Id"
 where b."Is_Active" = 'Y'
 and pvl."Status" = 'active' and p."Status" = 'active'
 and (pc."Name" is null or  UPPER(pc."Name") <> 'TIP')
@@ -195,6 +226,11 @@ select p."Business_Id" "BusinessId"
 		,0 :: bit "IsCouponAvailable"
 		,b."Order_Management_Sytem" "ECommercePlatform"
 		,pvl."Title" "VariantName"
+--         ,false :: boolean "IsInventoryTrackingAvailable"
+--         ,'':: character varying "InventoryTracking"
+--         ,0 ::  numeric "InventoryStockLevel"
+--         ,0 ::  numeric "InventoryLowStockLevel"
+--         ,false :: boolean "IsOutofStock"
 from "Product" p 
 join "Tip_Product" tp on p."Product_Id" = tp."Product_Id"
 join "Business" b on tp."Business_Id" = b."Business_Id"
@@ -236,6 +272,14 @@ select p.BusinessId "BusinessId"
 	  ,shippingDetail "ShippingDetail"
 	  ,p.ECommercePlatform "ECommercePlatform"
 	  ,p.VariantName "VariantName"
+	   ,p.StripeConnectAccountId "StripeConnectAccountId",
+	   p.IsInventoryTrackingAvailable "IsInventoryTrackingAvailable",
+    	p.InventoryTracking "InventoryTracking",
+p.InventoryStockLevel "InventoryStockLevel",
+p.InventoryLowStockLevel "InventoryLowStockLevel",
+p.IsOutofStock "IsOutofStock",
+p.ExternalProductId "ExternalProductId",
+p.ProductVariantId "ProductVariantId"
 from  list p
 where "rn" = 1
 order by p.CreatedDate desc;
@@ -428,6 +472,19 @@ from "Business_Review"
 where "Business_Id" =businessId) review;
  RETURN NEXT refcursor6;
 
+ OPEN refcursor7 FOR
+select pi."Product_Id" "ProductId"
+      ,pi."Image_Url" "ProductImage"
+	  ,pi."Product_Image_Id" "ProductImageId"
+	  ,pi."Desktop_Image_Url" "DesktopImageUrl"
+	  ,pi."Mobile_Image_Url" "MobileImageUrl"
+	  ,pi."Tablet_Image_Url" "TabletImageUrl"
+	  ,pvl."Product_Variant_List_Id" "ProductVariantListId"
+from "Product" p
+join "Product_Variant_List" pvl on p."Product_Id" = pvl."Product_Id"
+join "Product_Image" pi on pvl."Product_Variant_List_Id" = pi."Product_Variant_List_Id"
+join upcomingProductList up on p."Product_Id" = up.Product_Id;
+ RETURN NEXT refcursor7;
+ 
 END
 $BODY$;
-

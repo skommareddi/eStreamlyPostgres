@@ -1,5 +1,4 @@
-﻿
-CREATE OR REPLACE FUNCTION public.getallproducts(
+﻿CREATE OR REPLACE FUNCTION public.getallproducts(
 	pagenumber integer,
 	pagesize integer,
 	ref refcursor)
@@ -32,10 +31,11 @@ select BusinessId
 	  ,BusinessShortName
 	  ,ProductVariantListId
 	  ,ProductVariantKey
-	  ,CASE WHEN ProductVariantValue1 is not null 
-		    THEN CONCAT(ProductVariantValue , ' / ' , ProductVariantValue1)
-	        ELSE ProductVariantValue 
-	   END ProductVariantValue
+	  ,Title ProductVariantValue
+-- 	  ,CASE WHEN ProductVariantValue1 is not null 
+-- 		    THEN CONCAT(ProductVariantValue , ' / ' , ProductVariantValue1)
+-- 	        ELSE ProductVariantValue 
+-- 	   END ProductVariantValue
   ,coalesce(DiscountedPrice,Price) DiscountedPrice
  	  ,IsDiscountAvailable
   ,DiscountPercentage
@@ -55,10 +55,11 @@ select p."Business_Id" BusinessId
 		,b."Business_Name" BusinessName
 		,b."Shortname" BusinessShortName
 		,pvl."Product_Variant_List_Id" ProductVariantListId
-	    ,pv."Product_Variant_Name" ProductVariantKey
+	    ,'' ProductVariantKey
 		,pv."Product_Variant_List" ProductVariantValue
 		,pv1."Product_Variant_List" ProductVariantValue1
 		,pvl."Price" Price
+		,pvl."Title" Title
 		,ROW_NUMBER() OVER (PARTITION BY p."Product_Id",pvl."Product_Variant_List_Id" ORDER BY pi."Created_Date" ) AS rn
 	,cast (pvl."Price"  - (pvl."Price"  * d."Discount_Percentage" / 100) as decimal(10,2)) DiscountedPrice
 	,CASE WHEN d."Discount_Percentage" > 0 THEN 1 ELSE 0 END IsDiscountAvailable
@@ -80,7 +81,6 @@ and pvl."Status" = 'active'
 where rn = 1
 ORDER BY p.ProductId--NEWID() --p.ProductId
 LIMIT pageSize OFFSET pageNumber;
-
 
 Update productList set RatingCount = review.RatingCount
 	  ,Rating = review.Rating
@@ -104,4 +104,3 @@ DROP TABLE productList;
 DROP TABLE discountOffer;
 END
 $BODY$;
-
