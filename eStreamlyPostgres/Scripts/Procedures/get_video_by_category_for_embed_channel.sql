@@ -1,4 +1,3 @@
-
 CREATE OR REPLACE FUNCTION public.get_video_by_category_for_embed_channel(
 	shortname text,
 	pid bigint,
