@@ -1,5 +1,7 @@
-﻿CREATE OR REPLACE FUNCTION public.get_video_by_category_for_embed_channel(
+
+CREATE OR REPLACE FUNCTION public.get_video_by_category_for_embed_channel(
 	shortname text,
+	pid bigint,
 	refcursor1 refcursor,
 	refcursor2 refcursor)
     RETURNS SETOF refcursor 
@@ -9,7 +11,8 @@
     ROWS 1000
 
 AS $BODY$
-
+DECLARE
+    matched_count INTEGER;
 	BEGIN
 
 	DROP TABLE IF EXISTS businessList;
@@ -132,8 +135,9 @@ AS $BODY$
 			EventDesc,
 			EventImage,
 			uc."Shortname";
-	
-	OPEN refcursor1 FOR
+
+DROP TABLE IF EXISTS videoList;
+CREATE TEMP TABLE videoList AS
 	select * from 
 		(select  0 IsLive
 				,ci."Channel_Id" ChannelId
@@ -142,6 +146,7 @@ AS $BODY$
 				,m."User_Id" 
 				,m."Media_Url" Media_Url 
 				,COALESCE(m."Uploaded_Event_Thumbnail_Image_Url",ul."Event_Image",m."Media_thumbnail_Url") Media_thumbnailUrl
+				-- ,COALESCE(m."Uploaded_Event_Thumbnail_Image_Url",m."Media_thumbnail_Url") Media_thumbnailUrl
 				,m."Media_thumbnailGif_Url" Media_thumbnailGifUrl
 				,m."CreatedDate"
 				,u."ImageUrl" User_Profile_Image
@@ -159,7 +164,8 @@ AS $BODY$
 				,m."Tablet_Image_Url" TabletImageUrl	
 				,m."Channel_Name" EventName
 				,m."Channel_Desc" EventDesc
-		 		,ul."Keywords" "Keyword"		 		
+		 		,ul."Keywords" "Keyword"
+				,p."Shopify_Product_Id" 
 		from "MediaByUserAndChannel" m
 		join "Live_Stream_Info" ls on m."Media_Unique_Id" = ls."Unique_Id"
 		join "Channel_Info" ci on ls."Channel_Info_Id" = ci."Channel_Info_Id" 
@@ -167,19 +173,22 @@ AS $BODY$
 		join "AspNetUsers" u on m."User_Id" = u."Id"
 		join userChannel uc on b."Business_Id" = uc.BusinessId
 		left join "Upcoming_Live_Stream" ul on m."Media_Unique_Id" = ul."Media_Unique_Id"
+		left join "Poll_Info" pi on m."Media_Unique_Id" = pi."Unique_Id" and pi."Poll_Type" = 2
+		left join "Product" p on pi."Product_Id" = p."Product_Id"
 		where b."Is_Active" = 'Y'
 		and (ul."Is_Private_Event" = false or ul."Is_Private_Event" is null)
 		and (ul."Upcoming_Live_Stream_Id" is null or (ul."Upcoming_Live_Stream_Id" is not null and (ul."End_Date_Time" is null or ul."End_Date_Time" < NOW())))
 		and COALESCE(ul."Is_Active",'Y' )= 'Y' 
 		 and m."Is_Active" = true
 		 and m."Is_Private_Event" = false
+		-- and (pid IS NULL or p."Shopify_Product_Id" = pid)
 		UNION 
 		select  0 IsLive
 				,ci."Channel_Id" ChannelId
 				,ci."Channel_Name" ChannelName
 				,m."Video_Channel_Id" Media_Item_Id
 				,m."User_Id"
-				,m."M3U8_Video_Url" Media_Url 
+				,m."Video_Url" Media_Url 
 				,m."Video_Thumbnail_Url" Media_thumbnailUrl
 				,m."Video_Gif_Url" Media_thumbnailGifUrl
 				,m."Created_Date"
@@ -188,7 +197,7 @@ AS $BODY$
 				,m."Description" ChannelDesc
 				,m."Video_Unique_Id" Video_Id
 				,0 IsUpcomingLiveStream
-				,'media' MediaType
+				,'video' MediaType
 				,b."Business_Name" BusinessName
 				,b."Business_Image" BusinessImage
 				,b."Background_Image" BackgroundImage
@@ -199,16 +208,88 @@ AS $BODY$
 				,m."Title" EventName
 				,m."Description" EventDesc
 		 		,m."Keywords" "Keyword"
+				,p."Shopify_Product_Id" 
 		from "Video_Channel" m
 		join "Channel_Info" ci on m."Business_Id"= ci."Business_Id"
 		join "Business" b on ci."Business_Id" = b."Business_Id"
 		join "AspNetUsers" u on m."User_Id" = u."Id"
 		join userChannel uc on b."Business_Id" = uc.BusinessId
+		left join "Video_Interactivity" pi on m."Video_Unique_Id" = pi."Video_Unique_Id"   and pi."Poll_Type" = 2
+		left join "Product" p on pi."Product_Id" = p."Product_Id"
 		where b."Is_Active" = 'Y'
 		and m."Is_Active" = true
+	-- and (pid IS NULL or p."Shopify_Product_Id" = pid)
 		) s
 	order by "CreatedDate" desc;
-	RETURN NEXT refcursor1;
+
+ SELECT COUNT(*)
+    INTO matched_count
+    FROM videoList
+    WHERE ( "Shopify_Product_Id" = pid);
+
+    -- If there are matching videos, return only those
+    IF matched_count > 0 THEN
+        OPEN refcursor1 FOR
+            SELECT distinct IsLive
+				, ChannelId
+				, ChannelName
+				
+				,"User_Id"
+				, Media_Url 
+				, Media_thumbnailUrl
+				, Media_thumbnailGifUrl
+				,"CreatedDate"
+				, User_Profile_Image
+				, User_Thumbnail_Image
+				, ChannelDesc
+				, Video_Id
+				, IsUpcomingLiveStream
+				, MediaType
+				, BusinessName
+				, BusinessImage
+				, BackgroundImage
+				, MerchantShortName
+				, DesktopImageUrl
+				, MobileImageUrl
+				, TabletImageUrl	
+				, EventName
+				, EventDesc
+		 		,"Keyword"
+            FROM videoList
+            WHERE "Shopify_Product_Id" = pid;
+        RETURN NEXT refcursor1;
+    
+    -- If no matching videos, return all videos
+    ELSE
+        OPEN refcursor1 FOR
+            SELECT Distinct IsLive
+				, ChannelId
+				, ChannelName
+				,"User_Id"
+				, Media_Url 
+				, Media_thumbnailUrl
+				, Media_thumbnailGifUrl
+				,"CreatedDate"
+				, User_Profile_Image
+				, User_Thumbnail_Image
+				, ChannelDesc
+				, Video_Id
+				, IsUpcomingLiveStream
+				, MediaType
+				, BusinessName
+				, BusinessImage
+				, BackgroundImage
+				, MerchantShortName
+				, DesktopImageUrl
+				, MobileImageUrl
+				, TabletImageUrl	
+				, EventName
+				, EventDesc
+		 		,"Keyword"
+            FROM videoList;
+        RETURN NEXT refcursor1;
+    END IF;
+
 	
 		OPEN refcursor2 FOR
 	select e."Upcoming_Live_Stream_Id"
